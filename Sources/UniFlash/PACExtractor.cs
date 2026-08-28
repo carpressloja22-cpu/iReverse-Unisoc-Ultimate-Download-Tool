@@ -520,7 +520,15 @@ namespace iReverse_Unisoc_Ultimate
                             }
                         }
                     }
-                    ExtractFiles(reader, fileHeaders, outputDir);
+                    ExtractFiles(reader, fileHeaders, outputDir, (file, written, total) =>
+                    {
+                        MyDisplay.RichLogs(
+                            $"Extracting {file}: {MyDisplay.GetFileSizes(written)} / {MyDisplay.GetFileSizes(total)}",
+                            Color.Black,
+                            false,
+                            true
+                        );
+                    });
                     MyProgress.ProcessBar1(100);
                     MyProgress.ProcessBar2(100);
                     reader.Close();
@@ -528,7 +536,11 @@ namespace iReverse_Unisoc_Ultimate
                 }
             }
 
-            public static void ExtractFiles(BinaryReader reader, List<Dictionary<string, object>> fileHeaders, string outputDir)
+            public static void ExtractFiles(
+                BinaryReader reader,
+                List<Dictionary<string, object>> fileHeaders,
+                string outputDir,
+                Action<string, long, long> onFileProgress = null)
             {
                 try
                 {
@@ -578,7 +590,8 @@ namespace iReverse_Unisoc_Ultimate
                                     dataOffset,
                                     fileName,
                                     partitionSize,
-                                    outputDir
+                                    outputDir,
+                                    onFileProgress
                                 );
                             }
                             else
@@ -588,7 +601,8 @@ namespace iReverse_Unisoc_Ultimate
                                     dataOffset,
                                     fileName,
                                     partitionSize,
-                                    outputDir
+                                    outputDir,
+                                    onFileProgress
                                 );
                             }
 
@@ -611,6 +625,7 @@ namespace iReverse_Unisoc_Ultimate
                         }
                         currentCount += 1;
                         MyProgress.ProcessBar2(currentCount, partitionCount - 1);
+                        onFileProgress?.Invoke(fileName, partitionSize, partitionSize);
                     }
                     Console.WriteLine();
                 }
@@ -620,7 +635,13 @@ namespace iReverse_Unisoc_Ultimate
                 }
             }
 
-            public static void FilesDoExtract(BinaryReader reader, ulong dataOffset, string fileName, ulong partitionSize, string OutputDir)
+            public static void FilesDoExtract(
+                BinaryReader reader,
+                ulong dataOffset,
+                string fileName,
+                ulong partitionSize,
+                string OutputDir,
+                Action<string, long, long> onFileProgress = null)
             {
                 bool isSparse = false;
                 bool skip = fileName.ToLower().Contains("userdata");
@@ -666,6 +687,7 @@ namespace iReverse_Unisoc_Ultimate
                         remainingBytes -= (ulong)bytesRead;
                         writenBytes += bytesRead;
 
+                        onFileProgress?.Invoke(fileName, writenBytes, (long)partitionSize);
                         MyProgress.ProcessBar1(writenBytes, (long)partitionSize);
                     } while (true);
                     fileStream.Close();

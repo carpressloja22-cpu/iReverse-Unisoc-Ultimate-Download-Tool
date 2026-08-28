@@ -1,5 +1,6 @@
 ﻿using iReverse_Unisoc_Ultimate.MyUI;
 using iReverse_Unisoc_Ultimate.UniFlash;
+using iReverse_Unisoc_Ultimate.UniFlash.Validation;
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -435,6 +436,28 @@ namespace iReverse_Unisoc_Ultimate
 
                 if (flag)
                 {
+                    if (!Validation.FdlValidator.IsValid(uni.fdl1_location))
+                    {
+                        MessageBox.Show(
+                            "FDL1 is invalid or missing.",
+                            "Validation Error",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning
+                        );
+                        return;
+                    }
+
+                    if (File.Exists(uni.fdl2_location) && !Validation.FdlValidator.IsValid(uni.fdl2_location))
+                    {
+                        MessageBox.Show(
+                            "FDL2 is invalid or missing.",
+                            "Validation Error",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning
+                        );
+                        return;
+                    }
+
                     MyDisplay.RtbClear();
                     MyDisplay.GetButtonText(sender);
                     MyProgress.ProcessBar1(0);
@@ -442,73 +465,12 @@ namespace iReverse_Unisoc_Ultimate
                     totalchecked = 0;
                     totaldo = 0;
                     uni.uniCommand = string.Empty;
-                    uni.uniCommand = string.Concat(uni.uniCommand, "-progress -wait 5 -timeout ", uni.Timeout.Replace(" ", "") + " ");
 
-                    if (CkAutoRSAExploit.Checked)
-                    {
-                        if (!string.IsNullOrEmpty(TxtFDL1Address.Text))
-                        {
-                            if (uni.Prepare_Exploit(TxtFDL1Address.Text))
-                            {
-                                uni.uniCommand = string.Concat(
-                                    uni.uniCommand,
-                                    "-exploit " + uni.exploit + " "
-                                );
-                                totalchecked += 1;
-                            }
-                        }
-                    }
+                    var parts = new System.Collections.Generic.List<string>();
 
-                    if (File.Exists(uni.fdl2_location))
+                    if (CkRepartition.Checked && File.Exists(UniFileXML))
                     {
-                        uni.uniCommand = string.Concat(
-                            uni.uniCommand,
-                            "-fdl"
-                                + " "
-                                + "\""
-                                + uni.fdl1_location
-                                + "\""
-                                + " "
-                                + uni.fdl1_addr
-                                + " "
-                                + "-fdl"
-                                + " "
-                                + "\""
-                                + uni.fdl2_location
-                                + "\""
-                                + " "
-                                + uni.fdl2_addr
-                                + " "
-                                + "-exec"
-                                + " "
-                        );
-                        totalchecked += 2;
-                    }
-                    else
-                    {
-                        uni.uniCommand = string.Concat(
-                            uni.uniCommand,
-                            "-fdl"
-                                + " "
-                                + "\""
-                                + uni.fdl1_location
-                                + "\""
-                                + " "
-                                + uni.fdl1_addr
-                                + " "
-                                + "-exec"
-                                + " "
-                        );
-                        totalchecked += 1;
-                    }
-
-                    if (CkRepartition.Checked)
-                    {
-                        uni.uniCommand = string.Concat(
-                            uni.uniCommand,
-                            "-repartition " + "\"" + UniFileXML + "\"" + " "
-                        );
-                        totalchecked += 1;
+                        parts.Add("-repartition \"" + UniFileXML + "\"");
                     }
 
                     foreach (DataGridViewRow item in DataView.Rows)
@@ -518,24 +480,13 @@ namespace iReverse_Unisoc_Ultimate
                             FileInfo myInfo = new FileInfo(item.Cells[DataView.Columns[6].Index].Value.ToString());
                             if (myInfo.Length > 512)
                             {
-                                uni.uniCommand = string.Concat(
-                                    uni.uniCommand,
-                                    "-w"
-                                        + " "
-                                        + item.Cells[DataView.Columns[2].Index].Value.ToString()
-                                        + " "
-                                        + "\""
-                                        + item.Cells[DataView.Columns[6].Index].Value.ToString()
-                                        + "\""
-                                        + " "
-                                );
-                                totalchecked += 1;
+                                parts.Add("-w " + item.Cells[DataView.Columns[2].Index].Value.ToString() + " \"" + item.Cells[DataView.Columns[6].Index].Value.ToString() + "\"");
                             }
                         }
                     }
 
-                    totalchecked += 1;
-                    uni.uniCommand = uni.uniCommand.Substring(0, uni.uniCommand.Length - 1);
+                    uni.uniCommand = UniCommandBuilder.BuildFlash(parts.ToArray());
+                    totalchecked = parts.Count + (File.Exists(uni.fdl2_location) ? 2 : 1) + (CkAutoRSAExploit.Checked && !string.IsNullOrEmpty(uni.exploit) ? 1 : 0) + 1;
 
                     UnisocWorker.RunWorkerAsync();
                     UnisocWorker.Dispose();
@@ -619,6 +570,28 @@ namespace iReverse_Unisoc_Ultimate
 
                     if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                     {
+                        if (!Validation.FdlValidator.IsValid(uni.fdl1_location))
+                        {
+                            MessageBox.Show(
+                                "FDL1 is invalid or missing.",
+                                "Validation Error",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning
+                            );
+                            return;
+                        }
+
+                        if (File.Exists(uni.fdl2_location) && !Validation.FdlValidator.IsValid(uni.fdl2_location))
+                        {
+                            MessageBox.Show(
+                                "FDL2 is invalid or missing.",
+                                "Validation Error",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning
+                            );
+                            return;
+                        }
+
                         MyDisplay.RtbClear();
                         MyDisplay.GetButtonText(sender);
                         MyProgress.ProcessBar1(0);
@@ -627,67 +600,9 @@ namespace iReverse_Unisoc_Ultimate
                         totaldo = 0;
 
                         uni.uniCommand = string.Empty;
-                        uni.uniCommand = string.Concat(uni.uniCommand, "-progress -wait 5 -timeout ", uni.Timeout.Replace(" ", "") + " ");
-
-                        if (CkAutoRSAExploit.Checked)
-                        {
-                            if (!string.IsNullOrEmpty(TxtFDL1Address.Text))
-                            {
-                                if (uni.Prepare_Exploit(TxtFDL1Address.Text))
-                                {
-                                    uni.uniCommand = string.Concat(
-                                        uni.uniCommand,
-                                        "-exploit " + uni.exploit + " "
-                                    );
-                                    totalchecked += 1;
-                                }
-                            }
-                        }
-
-                        if (File.Exists(uni.fdl2_location))
-                        {
-                            uni.uniCommand = string.Concat(
-                                uni.uniCommand,
-                                "-fdl"
-                                    + " "
-                                    + "\""
-                                    + uni.fdl1_location
-                                    + "\""
-                                    + " "
-                                    + uni.fdl1_addr
-                                    + " "
-                                    + "-fdl"
-                                    + " "
-                                    + "\""
-                                    + uni.fdl2_location
-                                    + "\""
-                                    + " "
-                                    + uni.fdl2_addr
-                                    + " "
-                                    + "-exec"
-                                    + " "
-                            );
-                            totalchecked += 2;
-                        }
-                        else
-                        {
-                            uni.uniCommand = string.Concat(
-                                uni.uniCommand,
-                                "-fdl"
-                                    + " "
-                                    + "\""
-                                    + uni.fdl1_location
-                                    + "\""
-                                    + " "
-                                    + uni.fdl1_addr
-                                    + " "
-                                    + "-exec"
-                                    + " "
-                            );
-                            totalchecked += 1;
-                        }
-
                         UniFoldersave = folderBrowserDialog.SelectedPath;
+
+                        var parts = new System.Collections.Generic.List<string>();
 
                         foreach (DataGridViewRow item in DataView.Rows)
                         {
@@ -695,48 +610,22 @@ namespace iReverse_Unisoc_Ultimate
                             {
                                 if (readfromlist)
                                 {
-                                    uni.uniCommand = string.Concat(
-                                        uni.uniCommand,
-                                        "-rsize"
-                                            + " "
-                                            + item.Cells[DataView.Columns[2].Index].Value.ToString()
-                                            + " "
-                                            + "0"
-                                            + " "
-                                            + item.Cells[DataView.Columns[5].Index].Value.ToString().Replace("B", string.Empty)
-                                            + " "
-                                            + "\""
-                                            + UniFoldersave
-                                            + "\\"
-                                            + item.Cells[DataView.Columns[2].Index].Value.ToString()
-                                            + ".bin"
-                                            + "\""
-                                            + " "
-                                    );
+                                    parts.Add("-rsize " + item.Cells[DataView.Columns[2].Index].Value.ToString() + " 0 " + item.Cells[DataView.Columns[5].Index].Value.ToString().Replace("B", string.Empty) + " \"" + UniFoldersave + "\\" + item.Cells[DataView.Columns[2].Index].Value.ToString() + ".bin\"");
                                 }
                                 else
                                 {
-                                    uni.uniCommand = string.Concat(
-                                        uni.uniCommand,
-                                        "-r"
-                                            + " "
-                                            + item.Cells[DataView.Columns[2].Index].Value.ToString()
-                                            + " "
-                                            + "\""
-                                            + UniFoldersave
-                                            + "\\"
-                                            + item.Cells[DataView.Columns[2].Index].Value.ToString()
-                                            + ".bin"
-                                            + "\""
-                                            + " "
-                                    );
+                                    parts.Add("-r " + item.Cells[DataView.Columns[2].Index].Value.ToString() + " \"" + UniFoldersave + "\\" + item.Cells[DataView.Columns[2].Index].Value.ToString() + ".bin\"");
                                 }
-                                totalchecked += 1;
                             }
                         }
 
-                        totalchecked += 1;
-                        uni.uniCommand = uni.uniCommand.Substring(0, uni.uniCommand.Length - 1);
+                        uni.uniCommand = UniCommandBuilder.BuildRead(UniFoldersave, readfromlist);
+                        if (parts.Count > 0)
+                        {
+                            foreach (string p in parts)
+                                uni.uniCommand += " " + p;
+                        }
+                        totalchecked = parts.Count + (File.Exists(uni.fdl2_location) ? 2 : 1) + (CkAutoRSAExploit.Checked && !string.IsNullOrEmpty(uni.exploit) ? 1 : 0) + 1;
 
                         UnisocWorker.RunWorkerAsync();
                         UnisocWorker.Dispose();
@@ -806,6 +695,28 @@ namespace iReverse_Unisoc_Ultimate
 
                 if (flag)
                 {
+                    if (!Validation.FdlValidator.IsValid(uni.fdl1_location))
+                    {
+                        MessageBox.Show(
+                            "FDL1 is invalid or missing.",
+                            "Validation Error",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning
+                        );
+                        return;
+                    }
+
+                    if (File.Exists(uni.fdl2_location) && !Validation.FdlValidator.IsValid(uni.fdl2_location))
+                    {
+                        MessageBox.Show(
+                            "FDL2 is invalid or missing.",
+                            "Validation Error",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning
+                        );
+                        return;
+                    }
+
                     MyDisplay.RtbClear();
                     MyDisplay.GetButtonText(sender);
                     MyProgress.ProcessBar1(0);
@@ -814,83 +725,24 @@ namespace iReverse_Unisoc_Ultimate
                     totaldo = 0;
 
                     uni.uniCommand = string.Empty;
-                    uni.uniCommand = string.Concat(uni.uniCommand, "-progress -wait 5 -timeout ", uni.Timeout.Replace(" ", "") + " ");
 
-                    if (CkAutoRSAExploit.Checked)
-                    {
-                        if (!string.IsNullOrEmpty(TxtFDL1Address.Text))
-                        {
-                            if (uni.Prepare_Exploit(TxtFDL1Address.Text))
-                            {
-                                uni.uniCommand = string.Concat(
-                                    uni.uniCommand,
-                                    "-exploit " + uni.exploit + " "
-                                );
-                                totalchecked += 1;
-                            }
-                        }
-                    }
+                    var parts = new System.Collections.Generic.List<string>();
 
-                    if (File.Exists(uni.fdl2_location))
+                    if (CkRepartition.Checked && File.Exists(UniFileXML))
                     {
-                        uni.uniCommand = string.Concat(
-                            uni.uniCommand,
-                            "-fdl"
-                                + " "
-                                + "\""
-                                + uni.fdl1_location
-                                + "\""
-                                + " "
-                                + uni.fdl1_addr
-                                + " "
-                                + "-fdl"
-                                + " "
-                                + "\""
-                                + uni.fdl2_location
-                                + "\""
-                                + " "
-                                + uni.fdl2_addr
-                                + " "
-                                + "-exec"
-                                + " "
-                        );
-                        totalchecked += 2;
-                    }
-                    else
-                    {
-                        uni.uniCommand = string.Concat(
-                            uni.uniCommand,
-                            "-fdl"
-                                + " "
-                                + "\""
-                                + uni.fdl1_location
-                                + "\""
-                                + " "
-                                + uni.fdl1_addr
-                                + " "
-                                + "-exec"
-                                + " "
-                        );
-                        totalchecked += 1;
-                    }
-
-                    if (CkRepartition.Checked)
-                    {
-                        uni.uniCommand = string.Concat(uni.uniCommand, "-repartition " + "\"" + UniFileXML + "\"" + " ");
-                        totalchecked += 1;
+                        parts.Add("-repartition \"" + UniFileXML + "\"");
                     }
 
                     foreach (DataGridViewRow item in DataView.Rows)
                     {
                         if (Convert.ToBoolean(item.Cells[DataView.Columns[0].Index].Value) == true)
                         {
-                            uni.uniCommand = string.Concat(uni.uniCommand, "-e" + " " + item.Cells[DataView.Columns[2].Index].Value.ToString() + " ");
-                            totalchecked += 1;
+                            parts.Add("-e " + item.Cells[DataView.Columns[2].Index].Value.ToString());
                         }
                     }
 
-                    totalchecked += 1;
-                    uni.uniCommand = uni.uniCommand.Substring(0, uni.uniCommand.Length - 1);
+                    uni.uniCommand = UniCommandBuilder.BuildErase(parts.ToArray());
+                    totalchecked = parts.Count + (File.Exists(uni.fdl2_location) ? 2 : 1) + (CkAutoRSAExploit.Checked && !string.IsNullOrEmpty(uni.exploit) ? 1 : 0) + 1;
 
                     UnisocWorker.RunWorkerAsync();
                     UnisocWorker.Dispose();
@@ -911,78 +763,29 @@ namespace iReverse_Unisoc_Ultimate
         {
             if (!UnisocWorker.IsBusy)
             {
-                if (File.Exists(uni.fdl1_location) && !string.IsNullOrEmpty(uni.fdl1_addr))
+                if (!Validation.FdlValidator.IsValid(uni.fdl1_location) || string.IsNullOrEmpty(uni.fdl1_addr))
                 {
-                    MyDisplay.RtbClear();
-                    MyDisplay.GetButtonText(sender);
-                    MyProgress.ProcessBar1(0);
-                    MyProgress.ProcessBar2(0);
-                    totalchecked = 0;
-                    totaldo = 0;
-
-                    uni.uniCommand = string.Empty;
-                    uni.uniCommand = string.Concat(uni.uniCommand, "-progress -wait 5 -timeout ", uni.Timeout.Replace(" ", "") + " ");
-
-                    if (CkAutoRSAExploit.Checked)
-                    {
-                        if (!string.IsNullOrEmpty(TxtFDL1Address.Text))
-                        {
-                            if (uni.Prepare_Exploit(TxtFDL1Address.Text))
-                            {
-                                uni.uniCommand = string.Concat(uni.uniCommand, "-exploit " + uni.exploit + " ");
-                                totalchecked += 1;
-                            }
-                        }
-                    }
-
-                    if (File.Exists(uni.fdl2_location))
-                    {
-                        uni.uniCommand = string.Concat(
-                            uni.uniCommand,
-                            "-fdl"
-                                + " "
-                                + "\""
-                                + uni.fdl1_location
-                                + "\""
-                                + " "
-                                + uni.fdl1_addr
-                                + " "
-                                + "-fdl"
-                                + " "
-                                + "\""
-                                + uni.fdl2_location
-                                + "\""
-                                + " "
-                                + uni.fdl2_addr
-                                + " "
-                                + "-exec"
-                                + " "
-                        );
-                        totalchecked += 2;
-                    }
-                    else
-                    {
-                        uni.uniCommand = string.Concat(
-                            uni.uniCommand,
-                            "-fdl"
-                                + " "
-                                + "\""
-                                + uni.fdl1_location
-                                + "\""
-                                + " "
-                                + uni.fdl1_addr
-                                + " "
-                                + "-exec"
-                                + " "
-                        );
-                        totalchecked += 1;
-                    }
-
-                    totalchecked += 2;
-                    uni.uniCommand = string.Concat(uni.uniCommand, "-erase_frp");
-                    UnisocWorker.RunWorkerAsync();
-                    UnisocWorker.Dispose();
+                    MessageBox.Show(
+                        "FDL1 is invalid or address is missing.",
+                        "Validation Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning
+                    );
+                    return;
                 }
+
+                MyDisplay.RtbClear();
+                MyDisplay.GetButtonText(sender);
+                MyProgress.ProcessBar1(0);
+                MyProgress.ProcessBar2(0);
+                totalchecked = 0;
+                totaldo = 0;
+
+                uni.uniCommand = UniCommandBuilder.Build("-erase_frp");
+                totalchecked = (File.Exists(uni.fdl2_location) ? 2 : 1) + (CkAutoRSAExploit.Checked && !string.IsNullOrEmpty(uni.exploit) ? 1 : 0) + 2;
+
+                UnisocWorker.RunWorkerAsync();
+                UnisocWorker.Dispose();
             }
             else
             {
@@ -999,86 +802,32 @@ namespace iReverse_Unisoc_Ultimate
         {
             if (!UnisocWorker.IsBusy)
             {
-                if (File.Exists(uni.fdl1_location) && !string.IsNullOrEmpty(uni.fdl1_addr))
+                if (!Validation.FdlValidator.IsValid(uni.fdl1_location) || string.IsNullOrEmpty(uni.fdl1_addr))
                 {
-                    MyDisplay.RtbClear();
-                    DataView.Rows.Clear();
-                    MyDisplay.GetButtonText(sender);
-                    MyProgress.ProcessBar1(0);
-                    MyProgress.ProcessBar2(0);
-                    totalchecked = 0;
-                    totaldo = 0;
-
-                    uni.uniCommand = string.Empty;
-                    uni.uniCommand = string.Concat(uni.uniCommand, "-progress -wait 5 -timeout ", uni.Timeout.Replace(" ", "") + " ");
-
-                    if (CkAutoRSAExploit.Checked)
-                    {
-                        if (!string.IsNullOrEmpty(TxtFDL1Address.Text))
-                        {
-                            if (uni.Prepare_Exploit(TxtFDL1Address.Text))
-                            {
-                                uni.uniCommand = string.Concat(uni.uniCommand, "-exploit " + uni.exploit + " ");
-                                totalchecked += 1;
-                            }
-                        }
-                    }
-
-                    if (File.Exists(uni.fdl2_location))
-                    {
-                        uni.uniCommand = string.Concat(
-                            uni.uniCommand,
-                            "-fdl"
-                                + " "
-                                + "\""
-                                + uni.fdl1_location
-                                + "\""
-                                + " "
-                                + uni.fdl1_addr
-                                + " "
-                                + "-fdl"
-                                + " "
-                                + "\""
-                                + uni.fdl2_location
-                                + "\""
-                                + " "
-                                + uni.fdl2_addr
-                                + " "
-                                + "-exec"
-                                + " "
-                        );
-                        totalchecked += 2;
-                    }
-                    else
-                    {
-                        uni.uniCommand = string.Concat(
-                            uni.uniCommand,
-                            "-fdl"
-                                + " "
-                                + "\""
-                                + uni.fdl1_location
-                                + "\""
-                                + " "
-                                + uni.fdl1_addr
-                                + " "
-                                + "-exec"
-                                + " "
-                        );
-                        totalchecked += 1;
-                    }
-
-                    totalchecked += 2;
-
-                    uni.uniCommand = string.Concat(uni.uniCommand, "-gpt -get_deviceinfo " + "\"" + uni.Temp + "\\boot.img" + "\"");
-
-                    UnisocWorker.RunWorkerAsync();
-                    UnisocWorker.Dispose();
+                    Console.WriteLine("Please check fdl1 location : " + uni.fdl1_location);
+                    Console.WriteLine("Please check fdl1 address  : " + uni.fdl1_addr);
+                    MessageBox.Show(
+                        "FDL1 is invalid or address is missing.",
+                        "Validation Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning
+                    );
+                    return;
                 }
-                else
-                {
-                    Console.WriteLine("Pleace check fdl1 location : " + uni.fdl1_location);
-                    Console.WriteLine("Pleace check fdl1 address  : " + uni.fdl1_addr);
-                }
+
+                MyDisplay.RtbClear();
+                DataView.Rows.Clear();
+                MyDisplay.GetButtonText(sender);
+                MyProgress.ProcessBar1(0);
+                MyProgress.ProcessBar2(0);
+                totalchecked = 0;
+                totaldo = 0;
+
+                uni.uniCommand = UniCommandBuilder.BuildIdentify();
+                totalchecked = (File.Exists(uni.fdl2_location) ? 2 : 1) + (CkAutoRSAExploit.Checked && !string.IsNullOrEmpty(uni.exploit) ? 1 : 0) + 2;
+
+                UnisocWorker.RunWorkerAsync();
+                UnisocWorker.Dispose();
             }
             else
             {

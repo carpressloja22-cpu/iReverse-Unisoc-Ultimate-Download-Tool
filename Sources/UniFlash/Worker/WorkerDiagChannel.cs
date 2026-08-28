@@ -21,6 +21,19 @@ namespace iReverse_Unisoc_Ultimate
             public static bool busyState = false;
             public static byte[] DiagChannelPayload = uni.StringToByteArray("7E 00 00 00 00 08 00 FE 81 7E");
 
+            private static bool CheckCancellation(DoWorkEventArgs e, IntPtr buffer, byte[] data)
+            {
+                if (Main.SharedUI.UnisocWorker.CancellationPending)
+                {
+                    e.Cancel = true;
+                    DiagChannel.DiagClose();
+                    Marshal.Copy(buffer, data, 0, (int)buffer.Length);
+                    Marshal.FreeHGlobal(buffer);
+                    return true;
+                }
+                return false;
+            }
+
             public static void UniWorkerDiagChannel(object sender, DoWorkEventArgs e)
             {
                 uint bufferLength = 1024;
@@ -62,14 +75,8 @@ namespace iReverse_Unisoc_Ultimate
                     }
                 }
 
-                if (Main.SharedUI.UnisocWorker.CancellationPending)
-                {
-                    e.Cancel = true;
-                    DiagChannel.DiagClose();
-                    Marshal.Copy(buffer, data, 0, (int)bufferLength);
-                    Marshal.FreeHGlobal(buffer);
+                if (CheckCancellation(e, buffer, data))
                     return;
-                }
 
                 MyDisplay.RichLogs("Operation " + "\t" + ": ", Color.Black, true, false);
                 MyDisplay.RichLogs(MyDisplay.MyOperation, Color.Purple, true, true);
@@ -130,14 +137,8 @@ namespace iReverse_Unisoc_Ultimate
 
                 if (WorkerGlobal.WorkerMethod == "Factory Reset")
                 {
-                    if (Main.SharedUI.UnisocWorker.CancellationPending)
-                    {
-                        e.Cancel = true;
-                        DiagChannel.DiagClose();
-                        Marshal.Copy(buffer, data, 0, (int)bufferLength);
-                        Marshal.FreeHGlobal(buffer);
+                    if (CheckCancellation(e, buffer, data))
                         return;
-                    }
                     MyProgress.ProcessBar1(50);
                     string strResponse = string.Empty;
                     SendAT(DiagChannel.hDiagPhone, "AT+SPDIAG=\"AT+ETSRESET\"", ref strResponse);
@@ -150,14 +151,8 @@ namespace iReverse_Unisoc_Ultimate
                 }
                 else if (WorkerGlobal.WorkerMethod == "Power Off")
                 {
-                    if (Main.SharedUI.UnisocWorker.CancellationPending)
-                    {
-                        e.Cancel = true;
-                        DiagChannel.DiagClose();
-                        Marshal.Copy(buffer, data, 0, (int)bufferLength);
-                        Marshal.FreeHGlobal(buffer);
+                    if (CheckCancellation(e, buffer, data))
                         return;
-                    }
                     MyProgress.ProcessBar1(50);
                     PhoneCommandAPI.SP_PowerOff(DiagChannel.hDiagPhone);
                     MyProgress.ProcessBar1(100);
@@ -168,14 +163,8 @@ namespace iReverse_Unisoc_Ultimate
                 }
                 else if (WorkerGlobal.WorkerMethod == "Send ATCommand")
                 {
-                    if (Main.SharedUI.UnisocWorker.CancellationPending)
-                    {
-                        e.Cancel = true;
-                        DiagChannel.DiagClose();
-                        Marshal.Copy(buffer, data, 0, (int)bufferLength);
-                        Marshal.FreeHGlobal(buffer);
+                    if (CheckCancellation(e, buffer, data))
                         return;
-                    }
                     MyProgress.ProcessBar1(50);
                     string strResponse = string.Empty;
                     SendAT(
@@ -188,14 +177,8 @@ namespace iReverse_Unisoc_Ultimate
                 }
                 else if (WorkerGlobal.WorkerMethod == "Read IMEI")
                 {
-                    if (Main.SharedUI.UnisocWorker.CancellationPending)
-                    {
-                        e.Cancel = true;
-                        DiagChannel.DiagClose();
-                        Marshal.Copy(buffer, data, 0, (int)bufferLength);
-                        Marshal.FreeHGlobal(buffer);
+                    if (CheckCancellation(e, buffer, data))
                         return;
-                    }
                     result = PhoneCommandAPI.SP_ReadImei(
                         DiagChannel.hDiagPhone,
                         PhoneCommandAPI.NVID_IMEI1,
@@ -228,14 +211,8 @@ namespace iReverse_Unisoc_Ultimate
                 }
                 else if (WorkerGlobal.WorkerMethod == "Write IMEI 1")
                 {
-                    if (Main.SharedUI.UnisocWorker.CancellationPending)
-                    {
-                        e.Cancel = true;
-                        DiagChannel.DiagClose();
-                        Marshal.Copy(buffer, data, 0, (int)bufferLength);
-                        Marshal.FreeHGlobal(buffer);
+                    if (CheckCancellation(e, buffer, data))
                         return;
-                    }
                     MyDisplay.RichLogs(" ", Color.Black, true, true);
                     MyProgress.ProcessBar1(50);
                     string i1 = Main.SharedUI.TxtIMEI1.Text;
@@ -244,14 +221,8 @@ namespace iReverse_Unisoc_Ultimate
                 }
                 else if (WorkerGlobal.WorkerMethod == "Write IMEI 2")
                 {
-                    if (Main.SharedUI.UnisocWorker.CancellationPending)
-                    {
-                        e.Cancel = true;
-                        DiagChannel.DiagClose();
-                        Marshal.Copy(buffer, data, 0, (int)bufferLength);
-                        Marshal.FreeHGlobal(buffer);
+                    if (CheckCancellation(e, buffer, data))
                         return;
-                    }
                     MyDisplay.RichLogs(" ", Color.Black, true, true);
                     MyProgress.ProcessBar1(50);
                     string i2 = Main.SharedUI.TxtIMEI2.Text;
@@ -276,7 +247,7 @@ namespace iReverse_Unisoc_Ultimate
                 MyDisplay.RichLogs("Waiting for U2S connection... ", Color.Black, true, false);
 
                 busyState = true;
-                List<comInfo> deviceList = listDevices;
+                List<comInfo> deviceList = UsbDeviceCache.GetDevices();
                 comInfo selectedDevice = FindNewDevice(deviceList);
 
                 if (selectedDevice == null)
@@ -303,7 +274,7 @@ namespace iReverse_Unisoc_Ultimate
                         true
                     );
                     MyDisplay.RichLogs(
-                        "Product ID " + "\t" + "\t" + ": " + usb[1],
+                        "Product ID " + "\t" + ": " + usb[1],
                         Color.Black,
                         true,
                         true
@@ -418,7 +389,6 @@ namespace iReverse_Unisoc_Ultimate
                 PhoneCommandAPI.SP_HANDLE hDiagPhone
             )
             {
-                //WRITE IMEI 1	:
                 MyDisplay.RichLogs(
                     "WRITE IMEI " + num + "	: " + Imei + "... ",
                     Color.Black,
