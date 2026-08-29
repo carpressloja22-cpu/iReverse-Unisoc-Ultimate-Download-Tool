@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 
@@ -57,12 +57,11 @@ namespace iReverse_Unisoc_Ultimate
 
             public static void Delay(double dblSecs)
             {
-                DateTime.Now.AddSeconds(0.0000115740740740741);
-                DateTime dateTime = DateTime.Now.AddSeconds(0.0000115740740740741);
-                DateTime dateTime1 = dateTime.AddSeconds(dblSecs);
-                while (DateTime.Compare(DateTime.Now, dateTime1) <= 0)
+                DateTime dateTime1 = DateTime.Now.AddSeconds(dblSecs);
+                while (DateTime.Now < dateTime1)
                 {
                     Application.DoEvents();
+                    System.Threading.Thread.Sleep(5);
                 }
             }
 

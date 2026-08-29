@@ -1,4 +1,5 @@
-﻿using iReverse_Unisoc_Ultimate.MyUI;
+using iReverse_Unisoc_Ultimate.MyUI;
+using iReverse_Unisoc_Ultimate.UniFlash;
 using System;
 using System.Drawing;
 using System.IO;
@@ -182,7 +183,6 @@ namespace iReverse_Unisoc_Ultimate
                     GenerateUniCommand();
 
                     Main.SharedUI.UnisocWorker.RunWorkerAsync();
-                    Main.SharedUI.UnisocWorker.Dispose();
                 }
             }
 
@@ -284,107 +284,56 @@ namespace iReverse_Unisoc_Ultimate
                 string method = MyDisplay.MyOperation;
                 string files = null;
                 uni.uniCommand = string.Empty;
-                uni.uniCommand = string.Concat(
-                    uni.uniCommand,
-                    "-progress -wait 5 -timeout " + uni.Timeout
-                );
 
-                if (uni.isRSAExploit && !string.IsNullOrEmpty(uni.exploit))
-                {
-                    uni.uniCommand = string.Concat(uni.uniCommand, "-exploit " + uni.exploit + " ");
-                    WorkerDownload.totalchecked += 1;
-                }
-
-                if (File.Exists(uni.fdl2_location))
-                {
-                    uni.uniCommand = string.Concat(
-                        uni.uniCommand,
-                        "-fdl"
-                            + " "
-                            + "\""
-                            + uni.fdl1_location
-                            + "\""
-                            + " "
-                            + uni.fdl1_addr
-                            + " "
-                            + "-fdl"
-                            + " "
-                            + "\""
-                            + uni.fdl2_location
-                            + "\""
-                            + " "
-                            + uni.fdl2_addr
-                            + " "
-                            + "-exec"
-                            + " "
-                    );
-                    WorkerDownload.totalchecked += 2;
-                }
-                else
-                {
-                    uni.uniCommand = string.Concat(
-                        uni.uniCommand,
-                        "-fdl"
-                            + " "
-                            + "\""
-                            + uni.fdl1_location
-                            + "\""
-                            + " "
-                            + uni.fdl1_addr
-                            + " "
-                            + "-exec"
-                            + " "
-                    );
-                    WorkerDownload.totalchecked += 1;
-                }
-                Console.WriteLine("Doing " + method);
                 if (method == "READ DEVICE INFO - IDENTIFY")
                 {
-                    WorkerDownload.totalchecked += 2;
-                    uni.uniCommand = string.Concat(uni.uniCommand, "-get_deviceinfo " + uni.Temp + "\\boot.img");
+                    uni.uniCommand = UniCommandBuilder.BuildIdentify();
+                    WorkerDownload.totalchecked = (File.Exists(uni.fdl2_location) ? 2 : 1) + (uni.isRSAExploit && !string.IsNullOrEmpty(uni.exploit) ? 1 : 0) + 2;
                 }
                 else if (method == "FLASH MIUI RECOVERY - INSTALL")
                 {
-                    WorkerDownload.totalchecked += 2;
-                    uni.uniCommand = string.Concat(uni.uniCommand, "-w boot " + GetSPDFile("MIUI-Recovery.img", false));
+                    uni.uniCommand = UniCommandBuilder.BuildFlash("-w boot \"" + GetSPDFile("MIUI-Recovery.img", false) + "\"");
+                    WorkerDownload.totalchecked = (File.Exists(uni.fdl2_location) ? 2 : 1) + (uni.isRSAExploit && !string.IsNullOrEmpty(uni.exploit) ? 1 : 0) + 2;
                 }
                 else if (method == "RECOVERY WIPE DATA I + FRP")
                 {
-                    WorkerDownload.totalchecked += 3;
-                    uni.uniCommand = string.Concat(uni.uniCommand, "-erase_frp -e userdata");
+                    uni.uniCommand = UniCommandBuilder.Build("-erase_frp", "-e userdata");
+                    WorkerDownload.totalchecked = (File.Exists(uni.fdl2_location) ? 2 : 1) + (uni.isRSAExploit && !string.IsNullOrEmpty(uni.exploit) ? 1 : 0) + 3;
                 }
                 else if (method == "RECOVERY WIPE DATA II + FRP")
                 {
-                    WorkerDownload.totalchecked += 3;
-                    uni.uniCommand = string.Concat(uni.uniCommand, "-erase_frp -e userdata");
+                    uni.uniCommand = UniCommandBuilder.Build("-erase_frp", "-e userdata");
+                    WorkerDownload.totalchecked = (File.Exists(uni.fdl2_location) ? 2 : 1) + (uni.isRSAExploit && !string.IsNullOrEmpty(uni.exploit) ? 1 : 0) + 3;
                 }
                 else if (method == "RECOVERY FORMAT DATA + FRP")
                 {
-                    WorkerDownload.totalchecked += 3;
-                    uni.uniCommand = string.Concat(uni.uniCommand, "-erase_frp -e userdata");
+                    uni.uniCommand = UniCommandBuilder.Build("-erase_frp", "-e userdata");
+                    WorkerDownload.totalchecked = (File.Exists(uni.fdl2_location) ? 2 : 1) + (uni.isRSAExploit && !string.IsNullOrEmpty(uni.exploit) ? 1 : 0) + 3;
                 }
                 else if (method == "RECOVERY WIPE APP DATA + FRP")
                 {
-                    WorkerDownload.totalchecked += 3;
-                    files = "\"" + Application.StartupPath + "\\Data\\Misc\\4" + "\"";
-                    uni.uniCommand = string.Concat(uni.uniCommand, "-erase_frp -w misc " + files);
+                    files = "\"" + Application.StartupPath + "\\Data\\Misc\\4\"";
+                    uni.uniCommand = UniCommandBuilder.Build("-erase_frp", "-w misc " + files);
+                    WorkerDownload.totalchecked = (File.Exists(uni.fdl2_location) ? 2 : 1) + (uni.isRSAExploit && !string.IsNullOrEmpty(uni.exploit) ? 1 : 0) + 3;
                 }
                 else if (method == "RECOVERY WIPE DATA ONLY + FRP")
                 {
-                    WorkerDownload.totalchecked += 3;
-                    files = "\"" + Application.StartupPath + "\\Data\\Misc\\5" + "\"";
-                    uni.uniCommand = string.Concat(uni.uniCommand, "-erase_frp -w misc " + files);
+                    files = "\"" + Application.StartupPath + "\\Data\\Misc\\5\"";
+                    uni.uniCommand = UniCommandBuilder.Build("-erase_frp", "-w misc " + files);
+                    WorkerDownload.totalchecked = (File.Exists(uni.fdl2_location) ? 2 : 1) + (uni.isRSAExploit && !string.IsNullOrEmpty(uni.exploit) ? 1 : 0) + 3;
                 }
                 else if (method == "ERASE DATA + FRP")
                 {
-                    WorkerDownload.totalchecked += 3;
-                    uni.uniCommand = string.Concat(uni.uniCommand, "-erase_frp -e userdata");
+                    uni.uniCommand = UniCommandBuilder.Build("-erase_frp", "-e userdata");
+                    WorkerDownload.totalchecked = (File.Exists(uni.fdl2_location) ? 2 : 1) + (uni.isRSAExploit && !string.IsNullOrEmpty(uni.exploit) ? 1 : 0) + 3;
                 }
                 else if (method == "ERASE FRP ONLY")
                 {
-                    WorkerDownload.totalchecked += 2;
-                    uni.uniCommand = string.Concat(uni.uniCommand, "-erase_frp");
+                    uni.uniCommand = UniCommandBuilder.Build("-erase_frp");
+                    WorkerDownload.totalchecked = (File.Exists(uni.fdl2_location) ? 2 : 1) + (uni.isRSAExploit && !string.IsNullOrEmpty(uni.exploit) ? 1 : 0) + 2;
                 }
+
+                Console.WriteLine("Doing " + method);
             }
         }
     }

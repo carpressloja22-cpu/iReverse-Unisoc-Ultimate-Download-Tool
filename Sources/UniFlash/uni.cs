@@ -1,4 +1,4 @@
-﻿using iReverse_Unisoc_Ultimate.MyUI;
+using iReverse_Unisoc_Ultimate.MyUI;
 using iReverse_Unisoc_Ultimate.UniFlash.Worker;
 using System;
 using System.Collections.Generic;
@@ -27,13 +27,9 @@ namespace iReverse_Unisoc_Ultimate
             public static string fdl2_addr = string.Empty;
             public static string Timeout = "5000 ";
             public static string UniDir =
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts))
-                + "\\"
-                + "UniDir";
+                Path.Combine(Path.GetTempPath(), "iReverse_UniDir");
             public static string UniTmp =
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts))
-                + "\\"
-                + "UniTmp";
+                Path.Combine(Path.GetTempPath(), "iReverse_UniTmp");
             public static string uniCommand = string.Empty;
             public static bool isPartitionOperation = false;
 

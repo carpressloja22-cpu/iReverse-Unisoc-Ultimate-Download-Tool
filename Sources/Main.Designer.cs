@@ -1,4 +1,4 @@
-﻿
+
 using iReverse_Unisoc_Ultimate.CustomControls.iReverseControls;
 using System.Windows.Forms;
 
@@ -32,17 +32,27 @@ namespace iReverse_Unisoc_Ultimate
 		[System.Diagnostics.DebuggerStepThrough()]
 		private void InitializeComponent()
 		{
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.ComboPort = new System.Windows.Forms.ComboBox();
             this.UnisocWorker = new System.ComponentModel.BackgroundWorker();
             this.LabelTimer = new System.Windows.Forms.Label();
             this.GroupBoxFlash = new System.Windows.Forms.GroupBox();
+            this.BtnFlashPartition = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
+            this.BtnPACFirmware = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
+            this.BtnIdentify = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
+            this.CkKeepNV = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseToggleButton();
+            this.BtnFixAntiCrackFDL = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
+            this.BtnReadPartition = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
+            this.BtnFDL2 = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
+            this.BtnErase = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
             this.Label18 = new System.Windows.Forms.Label();
+            this.BtnEraseFRPAccount = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
+            this.BtnFDL1 = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
             this.Label4 = new System.Windows.Forms.Label();
             this.Label2 = new System.Windows.Forms.Label();
             this.Label3 = new System.Windows.Forms.Label();
@@ -87,6 +97,7 @@ namespace iReverse_Unisoc_Ultimate
             this.GroupBox3 = new System.Windows.Forms.GroupBox();
             this.listBoxOneClick = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseListBox();
             this.TabPage2 = new System.Windows.Forms.TabPage();
+            this.BtnRemoveAntiCrack = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
             this.BtnPowerOff = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
             this.BtnSendATCommand = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
             this.BtnFactoryReset = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
@@ -115,15 +126,6 @@ namespace iReverse_Unisoc_Ultimate
             this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.BtnFlashPartition = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
-            this.BtnPACFirmware = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
-            this.BtnIdentify = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
-            this.CkKeepNV = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseToggleButton();
-            this.BtnReadPartition = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
-            this.BtnFDL2 = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
-            this.BtnErase = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
-            this.BtnEraseFRPAccount = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
-            this.BtnFDL1 = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
             this.GroupBoxFlash.SuspendLayout();
             this.panel_header.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxIcon)).BeginInit();
@@ -166,6 +168,7 @@ namespace iReverse_Unisoc_Ultimate
             this.GroupBoxFlash.Controls.Add(this.BtnPACFirmware);
             this.GroupBoxFlash.Controls.Add(this.BtnIdentify);
             this.GroupBoxFlash.Controls.Add(this.CkKeepNV);
+            this.GroupBoxFlash.Controls.Add(this.BtnFixAntiCrackFDL);
             this.GroupBoxFlash.Controls.Add(this.BtnReadPartition);
             this.GroupBoxFlash.Controls.Add(this.BtnFDL2);
             this.GroupBoxFlash.Controls.Add(this.BtnErase);
@@ -188,6 +191,155 @@ namespace iReverse_Unisoc_Ultimate
             this.GroupBoxFlash.TabIndex = 9;
             this.GroupBoxFlash.TabStop = false;
             // 
+            // BtnFlashPartition
+            // 
+            this.BtnFlashPartition.BackColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnFlashPartition.BackgroundColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnFlashPartition.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.BtnFlashPartition.BorderRadius = 0;
+            this.BtnFlashPartition.BorderSize = 0;
+            this.BtnFlashPartition.FlatAppearance.BorderSize = 0;
+            this.BtnFlashPartition.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.BtnFlashPartition.ForeColor = System.Drawing.Color.White;
+            this.BtnFlashPartition.Location = new System.Drawing.Point(1020, 69);
+            this.BtnFlashPartition.Name = "BtnFlashPartition";
+            this.BtnFlashPartition.Size = new System.Drawing.Size(71, 23);
+            this.BtnFlashPartition.TabIndex = 44;
+            this.BtnFlashPartition.Text = "Flash";
+            this.BtnFlashPartition.TextColor = System.Drawing.Color.White;
+            this.BtnFlashPartition.UseVisualStyleBackColor = false;
+            this.BtnFlashPartition.Click += new System.EventHandler(this.BtnFlashPartition_Click);
+            // 
+            // BtnPACFirmware
+            // 
+            this.BtnPACFirmware.BackColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnPACFirmware.BackgroundColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnPACFirmware.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.BtnPACFirmware.BorderRadius = 0;
+            this.BtnPACFirmware.BorderSize = 0;
+            this.BtnPACFirmware.FlatAppearance.BorderSize = 0;
+            this.BtnPACFirmware.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.BtnPACFirmware.ForeColor = System.Drawing.Color.White;
+            this.BtnPACFirmware.Location = new System.Drawing.Point(516, 69);
+            this.BtnPACFirmware.Name = "BtnPACFirmware";
+            this.BtnPACFirmware.Size = new System.Drawing.Size(31, 23);
+            this.BtnPACFirmware.TabIndex = 44;
+            this.BtnPACFirmware.Text = "+";
+            this.BtnPACFirmware.TextColor = System.Drawing.Color.White;
+            this.BtnPACFirmware.UseVisualStyleBackColor = false;
+            this.BtnPACFirmware.Click += new System.EventHandler(this.BtnPACFirmware_Click);
+            // 
+            // BtnIdentify
+            // 
+            this.BtnIdentify.BackColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnIdentify.BackgroundColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnIdentify.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.BtnIdentify.BorderRadius = 0;
+            this.BtnIdentify.BorderSize = 0;
+            this.BtnIdentify.FlatAppearance.BorderSize = 0;
+            this.BtnIdentify.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.BtnIdentify.ForeColor = System.Drawing.Color.White;
+            this.BtnIdentify.Location = new System.Drawing.Point(934, 69);
+            this.BtnIdentify.Name = "BtnIdentify";
+            this.BtnIdentify.Size = new System.Drawing.Size(75, 23);
+            this.BtnIdentify.TabIndex = 44;
+            this.BtnIdentify.Text = "Identify";
+            this.BtnIdentify.TextColor = System.Drawing.Color.White;
+            this.BtnIdentify.UseVisualStyleBackColor = false;
+            this.BtnIdentify.Click += new System.EventHandler(this.BtnIdentify_Click);
+            // 
+            // CkKeepNV
+            // 
+            this.CkKeepNV.AutoSize = true;
+            this.CkKeepNV.Checked = true;
+            this.CkKeepNV.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CkKeepNV.Location = new System.Drawing.Point(1065, 19);
+            this.CkKeepNV.MinimumSize = new System.Drawing.Size(32, 16);
+            this.CkKeepNV.Name = "CkKeepNV";
+            this.CkKeepNV.OffBackColor = System.Drawing.Color.Gray;
+            this.CkKeepNV.OffToggleColor = System.Drawing.Color.Gainsboro;
+            this.CkKeepNV.OnBackColor = System.Drawing.Color.MediumSlateBlue;
+            this.CkKeepNV.OnToggleColor = System.Drawing.Color.WhiteSmoke;
+            this.CkKeepNV.Size = new System.Drawing.Size(32, 16);
+            this.CkKeepNV.TabIndex = 39;
+            this.CkKeepNV.UseVisualStyleBackColor = true;
+            // 
+            // BtnFixAntiCrackFDL
+            // 
+            this.BtnFixAntiCrackFDL.BackColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnFixAntiCrackFDL.BackgroundColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnFixAntiCrackFDL.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.BtnFixAntiCrackFDL.BorderRadius = 0;
+            this.BtnFixAntiCrackFDL.BorderSize = 0;
+            this.BtnFixAntiCrackFDL.FlatAppearance.BorderSize = 0;
+            this.BtnFixAntiCrackFDL.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.BtnFixAntiCrackFDL.ForeColor = System.Drawing.Color.White;
+            this.BtnFixAntiCrackFDL.Location = new System.Drawing.Point(652, 69);
+            this.BtnFixAntiCrackFDL.Name = "BtnFixAntiCrackFDL";
+            this.BtnFixAntiCrackFDL.Size = new System.Drawing.Size(110, 23);
+            this.BtnFixAntiCrackFDL.TabIndex = 44;
+            this.BtnFixAntiCrackFDL.Text = "Fix Anti-Crack";
+            this.BtnFixAntiCrackFDL.TextColor = System.Drawing.Color.White;
+            this.BtnFixAntiCrackFDL.UseVisualStyleBackColor = false;
+            this.BtnFixAntiCrackFDL.Click += new System.EventHandler(this.BtnFixAntiCrackFDL_Click);
+            // 
+            // BtnReadPartition
+            // 
+            this.BtnReadPartition.BackColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnReadPartition.BackgroundColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnReadPartition.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.BtnReadPartition.BorderRadius = 0;
+            this.BtnReadPartition.BorderSize = 0;
+            this.BtnReadPartition.FlatAppearance.BorderSize = 0;
+            this.BtnReadPartition.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.BtnReadPartition.ForeColor = System.Drawing.Color.White;
+            this.BtnReadPartition.Location = new System.Drawing.Point(850, 69);
+            this.BtnReadPartition.Name = "BtnReadPartition";
+            this.BtnReadPartition.Size = new System.Drawing.Size(80, 23);
+            this.BtnReadPartition.TabIndex = 44;
+            this.BtnReadPartition.Text = "Read";
+            this.BtnReadPartition.TextColor = System.Drawing.Color.White;
+            this.BtnReadPartition.UseVisualStyleBackColor = false;
+            this.BtnReadPartition.Click += new System.EventHandler(this.BtnReadPartition_Click);
+            // 
+            // BtnFDL2
+            // 
+            this.BtnFDL2.BackColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnFDL2.BackgroundColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnFDL2.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.BtnFDL2.BorderRadius = 0;
+            this.BtnFDL2.BorderSize = 0;
+            this.BtnFDL2.FlatAppearance.BorderSize = 0;
+            this.BtnFDL2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.BtnFDL2.ForeColor = System.Drawing.Color.White;
+            this.BtnFDL2.Location = new System.Drawing.Point(516, 43);
+            this.BtnFDL2.Name = "BtnFDL2";
+            this.BtnFDL2.Size = new System.Drawing.Size(31, 23);
+            this.BtnFDL2.TabIndex = 44;
+            this.BtnFDL2.Text = "+";
+            this.BtnFDL2.TextColor = System.Drawing.Color.White;
+            this.BtnFDL2.UseVisualStyleBackColor = false;
+            this.BtnFDL2.Click += new System.EventHandler(this.BtnFDL2_Click);
+            // 
+            // BtnErase
+            // 
+            this.BtnErase.BackColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnErase.BackgroundColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnErase.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.BtnErase.BorderRadius = 0;
+            this.BtnErase.BorderSize = 0;
+            this.BtnErase.FlatAppearance.BorderSize = 0;
+            this.BtnErase.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.BtnErase.ForeColor = System.Drawing.Color.White;
+            this.BtnErase.Location = new System.Drawing.Point(766, 69);
+            this.BtnErase.Name = "BtnErase";
+            this.BtnErase.Size = new System.Drawing.Size(80, 23);
+            this.BtnErase.TabIndex = 44;
+            this.BtnErase.Text = "Erase";
+            this.BtnErase.TextColor = System.Drawing.Color.White;
+            this.BtnErase.UseVisualStyleBackColor = false;
+            this.BtnErase.Click += new System.EventHandler(this.BtnErase_Click);
+            // 
             // Label18
             // 
             this.Label18.AutoSize = true;
@@ -196,6 +348,44 @@ namespace iReverse_Unisoc_Ultimate
             this.Label18.Size = new System.Drawing.Size(49, 13);
             this.Label18.TabIndex = 38;
             this.Label18.Text = "Keep NV";
+            // 
+            // BtnEraseFRPAccount
+            // 
+            this.BtnEraseFRPAccount.BackColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnEraseFRPAccount.BackgroundColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnEraseFRPAccount.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.BtnEraseFRPAccount.BorderRadius = 0;
+            this.BtnEraseFRPAccount.BorderSize = 0;
+            this.BtnEraseFRPAccount.FlatAppearance.BorderSize = 0;
+            this.BtnEraseFRPAccount.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.BtnEraseFRPAccount.ForeColor = System.Drawing.Color.White;
+            this.BtnEraseFRPAccount.Location = new System.Drawing.Point(553, 69);
+            this.BtnEraseFRPAccount.Name = "BtnEraseFRPAccount";
+            this.BtnEraseFRPAccount.Size = new System.Drawing.Size(95, 23);
+            this.BtnEraseFRPAccount.TabIndex = 44;
+            this.BtnEraseFRPAccount.Text = "Erase FRP";
+            this.BtnEraseFRPAccount.TextColor = System.Drawing.Color.White;
+            this.BtnEraseFRPAccount.UseVisualStyleBackColor = false;
+            this.BtnEraseFRPAccount.Click += new System.EventHandler(this.BtnEraseFRPAccount_Click);
+            // 
+            // BtnFDL1
+            // 
+            this.BtnFDL1.BackColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnFDL1.BackgroundColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnFDL1.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.BtnFDL1.BorderRadius = 0;
+            this.BtnFDL1.BorderSize = 0;
+            this.BtnFDL1.FlatAppearance.BorderSize = 0;
+            this.BtnFDL1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.BtnFDL1.ForeColor = System.Drawing.Color.White;
+            this.BtnFDL1.Location = new System.Drawing.Point(516, 17);
+            this.BtnFDL1.Name = "BtnFDL1";
+            this.BtnFDL1.Size = new System.Drawing.Size(31, 23);
+            this.BtnFDL1.TabIndex = 44;
+            this.BtnFDL1.Text = "+";
+            this.BtnFDL1.TextColor = System.Drawing.Color.White;
+            this.BtnFDL1.UseVisualStyleBackColor = false;
+            this.BtnFDL1.Click += new System.EventHandler(this.BtnFDL1_Click);
             // 
             // Label4
             // 
@@ -368,14 +558,13 @@ namespace iReverse_Unisoc_Ultimate
             this.label_title.Name = "label_title";
             this.label_title.Size = new System.Drawing.Size(780, 21);
             this.label_title.TabIndex = 57;
-            this.label_title.Text = "iReverse Unisoc Ultimate Download Tool - C# Version [11/11/2025] - Hadi Khoirudin" +
-    ", S. Kom";
+            this.label_title.Text = "UNIFIX TOOL";
             this.label_title.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Main_MouseDown);
             // 
             // pictureBoxIcon
             // 
             this.pictureBoxIcon.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pictureBoxIcon.Image = global::iReverse_Unisoc_Ultimate.Properties.Resources.logoireverse;
+            this.pictureBoxIcon.Image = global::iReverse_Unisoc_Ultimate.Properties.Resources.UNIFIX;
             this.pictureBoxIcon.Location = new System.Drawing.Point(-2, 0);
             this.pictureBoxIcon.Name = "pictureBoxIcon";
             this.pictureBoxIcon.Size = new System.Drawing.Size(36, 38);
@@ -754,6 +943,7 @@ namespace iReverse_Unisoc_Ultimate
             // 
             // TabPage2
             // 
+            this.TabPage2.Controls.Add(this.BtnRemoveAntiCrack);
             this.TabPage2.Controls.Add(this.BtnPowerOff);
             this.TabPage2.Controls.Add(this.BtnSendATCommand);
             this.TabPage2.Controls.Add(this.BtnFactoryReset);
@@ -770,6 +960,25 @@ namespace iReverse_Unisoc_Ultimate
             this.TabPage2.Text = "Diag Tool";
             this.TabPage2.UseVisualStyleBackColor = true;
             // 
+            // BtnRemoveAntiCrack
+            // 
+            this.BtnRemoveAntiCrack.BackColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnRemoveAntiCrack.BackgroundColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnRemoveAntiCrack.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.BtnRemoveAntiCrack.BorderRadius = 0;
+            this.BtnRemoveAntiCrack.BorderSize = 0;
+            this.BtnRemoveAntiCrack.FlatAppearance.BorderSize = 0;
+            this.BtnRemoveAntiCrack.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.BtnRemoveAntiCrack.ForeColor = System.Drawing.Color.White;
+            this.BtnRemoveAntiCrack.Location = new System.Drawing.Point(62, 185);
+            this.BtnRemoveAntiCrack.Name = "BtnRemoveAntiCrack";
+            this.BtnRemoveAntiCrack.Size = new System.Drawing.Size(414, 25);
+            this.BtnRemoveAntiCrack.TabIndex = 37;
+            this.BtnRemoveAntiCrack.Text = "Remove Anti-Crack / Fix P7";
+            this.BtnRemoveAntiCrack.TextColor = System.Drawing.Color.White;
+            this.BtnRemoveAntiCrack.UseVisualStyleBackColor = false;
+            this.BtnRemoveAntiCrack.Click += new System.EventHandler(this.BtnRemoveAntiCrack_Click);
+            // 
             // BtnPowerOff
             // 
             this.BtnPowerOff.BackColor = System.Drawing.Color.MediumSlateBlue;
@@ -780,7 +989,7 @@ namespace iReverse_Unisoc_Ultimate
             this.BtnPowerOff.FlatAppearance.BorderSize = 0;
             this.BtnPowerOff.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.BtnPowerOff.ForeColor = System.Drawing.Color.White;
-            this.BtnPowerOff.Location = new System.Drawing.Point(290, 167);
+            this.BtnPowerOff.Location = new System.Drawing.Point(290, 150);
             this.BtnPowerOff.Name = "BtnPowerOff";
             this.BtnPowerOff.Size = new System.Drawing.Size(186, 23);
             this.BtnPowerOff.TabIndex = 36;
@@ -818,7 +1027,7 @@ namespace iReverse_Unisoc_Ultimate
             this.BtnFactoryReset.FlatAppearance.BorderSize = 0;
             this.BtnFactoryReset.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.BtnFactoryReset.ForeColor = System.Drawing.Color.White;
-            this.BtnFactoryReset.Location = new System.Drawing.Point(62, 167);
+            this.BtnFactoryReset.Location = new System.Drawing.Point(62, 150);
             this.BtnFactoryReset.Name = "BtnFactoryReset";
             this.BtnFactoryReset.Size = new System.Drawing.Size(186, 23);
             this.BtnFactoryReset.TabIndex = 36;
@@ -867,7 +1076,7 @@ namespace iReverse_Unisoc_Ultimate
             this.RdFactoryTestMode.MinimumSize = new System.Drawing.Size(0, 13);
             this.RdFactoryTestMode.Name = "RdFactoryTestMode";
             this.RdFactoryTestMode.Padding = new System.Windows.Forms.Padding(10, 0, 0, 0);
-            this.RdFactoryTestMode.Size = new System.Drawing.Size(124, 17);
+            this.RdFactoryTestMode.Size = new System.Drawing.Size(137, 17);
             this.RdFactoryTestMode.TabIndex = 38;
             this.RdFactoryTestMode.Text = "Factory Test Mode";
             this.RdFactoryTestMode.UnCheckedColor = System.Drawing.Color.Gray;
@@ -884,7 +1093,7 @@ namespace iReverse_Unisoc_Ultimate
             this.RdCalibrationMode.MinimumSize = new System.Drawing.Size(0, 13);
             this.RdCalibrationMode.Name = "RdCalibrationMode";
             this.RdCalibrationMode.Padding = new System.Windows.Forms.Padding(10, 0, 0, 0);
-            this.RdCalibrationMode.Size = new System.Drawing.Size(114, 17);
+            this.RdCalibrationMode.Size = new System.Drawing.Size(131, 17);
             this.RdCalibrationMode.TabIndex = 37;
             this.RdCalibrationMode.TabStop = true;
             this.RdCalibrationMode.Text = "Calibration Mode";
@@ -1066,14 +1275,14 @@ namespace iReverse_Unisoc_Ultimate
             this.DataView.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.DataView.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
             this.DataView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.MediumSlateBlue;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.SlateBlue;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.DataView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.Color.MediumSlateBlue;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.Color.SlateBlue;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.DataView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle6;
             this.DataView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.DataView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Ck,
@@ -1083,26 +1292,26 @@ namespace iReverse_Unisoc_Ultimate
             this.Column4,
             this.Column5,
             this.Column6});
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.MediumSlateBlue;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.DataView.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle9.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.Color.MediumSlateBlue;
+            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.DataView.DefaultCellStyle = dataGridViewCellStyle9;
             this.DataView.EnableHeadersVisualStyles = false;
             this.DataView.Location = new System.Drawing.Point(3, 3);
             this.DataView.Name = "DataView";
             this.DataView.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.Color.MediumSlateBlue;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.DataView.RowHeadersDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle10.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.Color.MediumSlateBlue;
+            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.DataView.RowHeadersDefaultCellStyle = dataGridViewCellStyle10;
             this.DataView.RowHeadersVisible = false;
             this.DataView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.DataView.Size = new System.Drawing.Size(540, 396);
@@ -1111,13 +1320,13 @@ namespace iReverse_Unisoc_Ultimate
             // 
             // Ck
             // 
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle2.BackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.MediumSlateBlue;
-            dataGridViewCellStyle2.NullValue = false;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.MediumSlateBlue;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.White;
-            this.Ck.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle7.BackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle7.ForeColor = System.Drawing.Color.MediumSlateBlue;
+            dataGridViewCellStyle7.NullValue = false;
+            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.Color.MediumSlateBlue;
+            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.Color.White;
+            this.Ck.DefaultCellStyle = dataGridViewCellStyle7;
             this.Ck.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Ck.HeaderText = "";
             this.Ck.Name = "Ck";
@@ -1165,180 +1374,12 @@ namespace iReverse_Unisoc_Ultimate
             // 
             // Column6
             // 
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.Column6.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.Column6.DefaultCellStyle = dataGridViewCellStyle8;
             this.Column6.HeaderText = "Locations";
             this.Column6.Name = "Column6";
             this.Column6.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.Column6.Width = 105;
-            // 
-            // BtnFlashPartition
-            // 
-            this.BtnFlashPartition.BackColor = System.Drawing.Color.MediumSlateBlue;
-            this.BtnFlashPartition.BackgroundColor = System.Drawing.Color.MediumSlateBlue;
-            this.BtnFlashPartition.BorderColor = System.Drawing.Color.PaleVioletRed;
-            this.BtnFlashPartition.BorderRadius = 0;
-            this.BtnFlashPartition.BorderSize = 0;
-            this.BtnFlashPartition.FlatAppearance.BorderSize = 0;
-            this.BtnFlashPartition.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.BtnFlashPartition.ForeColor = System.Drawing.Color.White;
-            this.BtnFlashPartition.Location = new System.Drawing.Point(1020, 69);
-            this.BtnFlashPartition.Name = "BtnFlashPartition";
-            this.BtnFlashPartition.Size = new System.Drawing.Size(71, 23);
-            this.BtnFlashPartition.TabIndex = 44;
-            this.BtnFlashPartition.Text = "Flash";
-            this.BtnFlashPartition.TextColor = System.Drawing.Color.White;
-            this.BtnFlashPartition.UseVisualStyleBackColor = false;
-            this.BtnFlashPartition.Click += new System.EventHandler(this.BtnFlashPartition_Click);
-            // 
-            // BtnPACFirmware
-            // 
-            this.BtnPACFirmware.BackColor = System.Drawing.Color.MediumSlateBlue;
-            this.BtnPACFirmware.BackgroundColor = System.Drawing.Color.MediumSlateBlue;
-            this.BtnPACFirmware.BorderColor = System.Drawing.Color.PaleVioletRed;
-            this.BtnPACFirmware.BorderRadius = 0;
-            this.BtnPACFirmware.BorderSize = 0;
-            this.BtnPACFirmware.FlatAppearance.BorderSize = 0;
-            this.BtnPACFirmware.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.BtnPACFirmware.ForeColor = System.Drawing.Color.White;
-            this.BtnPACFirmware.Location = new System.Drawing.Point(516, 69);
-            this.BtnPACFirmware.Name = "BtnPACFirmware";
-            this.BtnPACFirmware.Size = new System.Drawing.Size(31, 23);
-            this.BtnPACFirmware.TabIndex = 44;
-            this.BtnPACFirmware.Text = "+";
-            this.BtnPACFirmware.TextColor = System.Drawing.Color.White;
-            this.BtnPACFirmware.UseVisualStyleBackColor = false;
-            this.BtnPACFirmware.Click += new System.EventHandler(this.BtnPACFirmware_Click);
-            // 
-            // BtnIdentify
-            // 
-            this.BtnIdentify.BackColor = System.Drawing.Color.MediumSlateBlue;
-            this.BtnIdentify.BackgroundColor = System.Drawing.Color.MediumSlateBlue;
-            this.BtnIdentify.BorderColor = System.Drawing.Color.PaleVioletRed;
-            this.BtnIdentify.BorderRadius = 0;
-            this.BtnIdentify.BorderSize = 0;
-            this.BtnIdentify.FlatAppearance.BorderSize = 0;
-            this.BtnIdentify.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.BtnIdentify.ForeColor = System.Drawing.Color.White;
-            this.BtnIdentify.Location = new System.Drawing.Point(940, 69);
-            this.BtnIdentify.Name = "BtnIdentify";
-            this.BtnIdentify.Size = new System.Drawing.Size(74, 23);
-            this.BtnIdentify.TabIndex = 44;
-            this.BtnIdentify.Text = "Identify";
-            this.BtnIdentify.TextColor = System.Drawing.Color.White;
-            this.BtnIdentify.UseVisualStyleBackColor = false;
-            this.BtnIdentify.Click += new System.EventHandler(this.BtnIdentify_Click);
-            // 
-            // CkKeepNV
-            // 
-            this.CkKeepNV.AutoSize = true;
-            this.CkKeepNV.Checked = true;
-            this.CkKeepNV.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.CkKeepNV.Location = new System.Drawing.Point(1065, 19);
-            this.CkKeepNV.MinimumSize = new System.Drawing.Size(32, 16);
-            this.CkKeepNV.Name = "CkKeepNV";
-            this.CkKeepNV.OffBackColor = System.Drawing.Color.Gray;
-            this.CkKeepNV.OffToggleColor = System.Drawing.Color.Gainsboro;
-            this.CkKeepNV.OnBackColor = System.Drawing.Color.MediumSlateBlue;
-            this.CkKeepNV.OnToggleColor = System.Drawing.Color.WhiteSmoke;
-            this.CkKeepNV.Size = new System.Drawing.Size(32, 16);
-            this.CkKeepNV.TabIndex = 39;
-            this.CkKeepNV.UseVisualStyleBackColor = true;
-            // 
-            // BtnReadPartition
-            // 
-            this.BtnReadPartition.BackColor = System.Drawing.Color.MediumSlateBlue;
-            this.BtnReadPartition.BackgroundColor = System.Drawing.Color.MediumSlateBlue;
-            this.BtnReadPartition.BorderColor = System.Drawing.Color.PaleVioletRed;
-            this.BtnReadPartition.BorderRadius = 0;
-            this.BtnReadPartition.BorderSize = 0;
-            this.BtnReadPartition.FlatAppearance.BorderSize = 0;
-            this.BtnReadPartition.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.BtnReadPartition.ForeColor = System.Drawing.Color.White;
-            this.BtnReadPartition.Location = new System.Drawing.Point(811, 69);
-            this.BtnReadPartition.Name = "BtnReadPartition";
-            this.BtnReadPartition.Size = new System.Drawing.Size(123, 23);
-            this.BtnReadPartition.TabIndex = 44;
-            this.BtnReadPartition.Text = "Read Partition";
-            this.BtnReadPartition.TextColor = System.Drawing.Color.White;
-            this.BtnReadPartition.UseVisualStyleBackColor = false;
-            this.BtnReadPartition.Click += new System.EventHandler(this.BtnReadPartition_Click);
-            // 
-            // BtnFDL2
-            // 
-            this.BtnFDL2.BackColor = System.Drawing.Color.MediumSlateBlue;
-            this.BtnFDL2.BackgroundColor = System.Drawing.Color.MediumSlateBlue;
-            this.BtnFDL2.BorderColor = System.Drawing.Color.PaleVioletRed;
-            this.BtnFDL2.BorderRadius = 0;
-            this.BtnFDL2.BorderSize = 0;
-            this.BtnFDL2.FlatAppearance.BorderSize = 0;
-            this.BtnFDL2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.BtnFDL2.ForeColor = System.Drawing.Color.White;
-            this.BtnFDL2.Location = new System.Drawing.Point(516, 43);
-            this.BtnFDL2.Name = "BtnFDL2";
-            this.BtnFDL2.Size = new System.Drawing.Size(31, 23);
-            this.BtnFDL2.TabIndex = 44;
-            this.BtnFDL2.Text = "+";
-            this.BtnFDL2.TextColor = System.Drawing.Color.White;
-            this.BtnFDL2.UseVisualStyleBackColor = false;
-            this.BtnFDL2.Click += new System.EventHandler(this.BtnFDL2_Click);
-            // 
-            // BtnErase
-            // 
-            this.BtnErase.BackColor = System.Drawing.Color.MediumSlateBlue;
-            this.BtnErase.BackgroundColor = System.Drawing.Color.MediumSlateBlue;
-            this.BtnErase.BorderColor = System.Drawing.Color.PaleVioletRed;
-            this.BtnErase.BorderRadius = 0;
-            this.BtnErase.BorderSize = 0;
-            this.BtnErase.FlatAppearance.BorderSize = 0;
-            this.BtnErase.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.BtnErase.ForeColor = System.Drawing.Color.White;
-            this.BtnErase.Location = new System.Drawing.Point(682, 69);
-            this.BtnErase.Name = "BtnErase";
-            this.BtnErase.Size = new System.Drawing.Size(123, 23);
-            this.BtnErase.TabIndex = 44;
-            this.BtnErase.Text = "Erase Partition";
-            this.BtnErase.TextColor = System.Drawing.Color.White;
-            this.BtnErase.UseVisualStyleBackColor = false;
-            this.BtnErase.Click += new System.EventHandler(this.BtnErase_Click);
-            // 
-            // BtnEraseFRPAccount
-            // 
-            this.BtnEraseFRPAccount.BackColor = System.Drawing.Color.MediumSlateBlue;
-            this.BtnEraseFRPAccount.BackgroundColor = System.Drawing.Color.MediumSlateBlue;
-            this.BtnEraseFRPAccount.BorderColor = System.Drawing.Color.PaleVioletRed;
-            this.BtnEraseFRPAccount.BorderRadius = 0;
-            this.BtnEraseFRPAccount.BorderSize = 0;
-            this.BtnEraseFRPAccount.FlatAppearance.BorderSize = 0;
-            this.BtnEraseFRPAccount.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.BtnEraseFRPAccount.ForeColor = System.Drawing.Color.White;
-            this.BtnEraseFRPAccount.Location = new System.Drawing.Point(553, 69);
-            this.BtnEraseFRPAccount.Name = "BtnEraseFRPAccount";
-            this.BtnEraseFRPAccount.Size = new System.Drawing.Size(123, 23);
-            this.BtnEraseFRPAccount.TabIndex = 44;
-            this.BtnEraseFRPAccount.Text = "Erase FRP Account";
-            this.BtnEraseFRPAccount.TextColor = System.Drawing.Color.White;
-            this.BtnEraseFRPAccount.UseVisualStyleBackColor = false;
-            this.BtnEraseFRPAccount.Click += new System.EventHandler(this.BtnEraseFRPAccount_Click);
-            // 
-            // BtnFDL1
-            // 
-            this.BtnFDL1.BackColor = System.Drawing.Color.MediumSlateBlue;
-            this.BtnFDL1.BackgroundColor = System.Drawing.Color.MediumSlateBlue;
-            this.BtnFDL1.BorderColor = System.Drawing.Color.PaleVioletRed;
-            this.BtnFDL1.BorderRadius = 0;
-            this.BtnFDL1.BorderSize = 0;
-            this.BtnFDL1.FlatAppearance.BorderSize = 0;
-            this.BtnFDL1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.BtnFDL1.ForeColor = System.Drawing.Color.White;
-            this.BtnFDL1.Location = new System.Drawing.Point(516, 17);
-            this.BtnFDL1.Name = "BtnFDL1";
-            this.BtnFDL1.Size = new System.Drawing.Size(31, 23);
-            this.BtnFDL1.TabIndex = 44;
-            this.BtnFDL1.Text = "+";
-            this.BtnFDL1.TextColor = System.Drawing.Color.White;
-            this.BtnFDL1.UseVisualStyleBackColor = false;
-            this.BtnFDL1.Click += new System.EventHandler(this.BtnFDL1_Click);
             // 
             // Main
             // 
@@ -1446,6 +1487,7 @@ namespace iReverse_Unisoc_Ultimate
 		internal CustomControls.iReverseControls.iReverseButton BtnEnterDiagMode;
 		internal CustomControls.iReverseControls.iReverseButton BtnFactoryReset;
 		internal CustomControls.iReverseControls.iReverseButton BtnPowerOff;
+		internal CustomControls.iReverseControls.iReverseButton BtnRemoveAntiCrack;
 		internal CustomControls.iReverseControls.iReverseButton BtnSendATCommand;
 		internal CustomControls.iReverseControls.iReverseButton BtnReadIMEI1;
 		internal CustomControls.iReverseControls.iReverseButton BtnReadIMEI2;
@@ -1466,6 +1508,7 @@ namespace iReverse_Unisoc_Ultimate
 		internal CustomControls.iReverseControls.iReverseButton BtnFDL2;
 		internal CustomControls.iReverseControls.iReverseButton BtnPACFirmware;
 		internal CustomControls.iReverseControls.iReverseButton BtnEraseFRPAccount;
+		internal CustomControls.iReverseControls.iReverseButton BtnFixAntiCrackFDL;
 		internal CustomControls.iReverseControls.iReverseButton BtnErase;
 		internal CustomControls.iReverseControls.iReverseButton BtnReadPartition;
 		internal CustomControls.iReverseControls.iReverseButton BtnIdentify;
