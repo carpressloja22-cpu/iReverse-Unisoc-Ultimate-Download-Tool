@@ -1,4 +1,4 @@
-﻿using iReverse_Unisoc_Ultimate.MyUI;
+using iReverse_Unisoc_Ultimate.MyUI;
 using iReverse_Unisoc_Ultimate.UniFlash;
 using System;
 using System.Drawing;
@@ -183,7 +183,6 @@ namespace iReverse_Unisoc_Ultimate
                     GenerateUniCommand();
 
                     Main.SharedUI.UnisocWorker.RunWorkerAsync();
-                    Main.SharedUI.UnisocWorker.Dispose();
                 }
             }
 

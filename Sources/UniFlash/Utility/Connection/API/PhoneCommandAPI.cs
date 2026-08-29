@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 
 namespace iReverse_Unisoc_Ultimate
@@ -236,6 +236,16 @@ namespace iReverse_Unisoc_Ultimate
             )]
             public static extern int SP_PowerOff(SP_HANDLE hDiagPhone);
 
+            [DllImport(
+                LibPhoneCommand,
+                CharSet = CharSet.Auto,
+                CallingConvention = CallingConvention.StdCall
+            )]
+            public static extern int SP_CustomerPhoneOp(
+                SP_HANDLE hDiagPhone,
+                CUSTOMER_PHONE_STATE_OPER eOper
+            );
+
             public enum CUSTOMER_PHONE_STATE_OPER
             {
                 CUSTOMER_DISK_FORMAT = 0,
@@ -251,6 +261,31 @@ namespace iReverse_Unisoc_Ultimate
             public const int MAX_WIFI_ADDR_NV_LENGTH = 6;
             public const ushort NVID_IMEI1 = 0x5;
             public const ushort NVID_IMEI2 = 0x179;
+            public const ushort NVID_SIMLOCK_SIGN = 0x1A3;
+            public const ushort NVID_SIMLOCK_DATA = 0x1A4;
+            public const ushort NVID_SIM_LOCK_CUSTOMIZE_DATA = 0x1F0;
+            public const ushort NVID_SIM_LOCK_USER_DATA = 0x1F1;
+            public const ushort NVID_SIM_LOCK_CONTROL_KEY = 0x1F2;
+            public const ushort NVID_SIM_LOCK_STORAGE_KEY = 0x1F4;
+            public const ushort NVID_NV_PARAM_TYPE_SIM_CFG1 = 0x7E4;
+            // Anti-Crack / ATS specific NV IDs (Transsion / Unisoc)
+            public const ushort NVID_ANTI_CRACK_FLAG      = 0x22F;  // 559  - ATS lock flag
+            public const ushort NVID_SECURITY_STATE       = 0x230;  // 560  - Security state word
+            public const ushort NVID_SIM_LOCK_EX_DATA     = 0x1F3;  // 499  - Extended SimLock data
+            public const ushort NVID_SIM_CFG2             = 0x7E5;  // 2021 - SIM config block 2
+            public const ushort NVID_ANTI_CRACK_EXT       = 0x4D2;  // 1234 - Anti-Crack extension (Transsion)
+
+            [DllImport(
+                LibPhoneCommand,
+                CharSet = CharSet.Auto,
+                CallingConvention = CallingConvention.StdCall
+            )]
+            public static extern int SP_WriteNV(
+                SP_HANDLE hDiagPhone,
+                ushort uNvID,
+                IntPtr lpData,
+                uint ulDataLen
+            );
 
             [DllImport(LibPhoneCommand, CallingConvention = CallingConvention.StdCall)]
             public static extern int SP_ReadImei(

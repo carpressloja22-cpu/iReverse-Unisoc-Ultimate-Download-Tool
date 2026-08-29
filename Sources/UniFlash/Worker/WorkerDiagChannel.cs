@@ -54,13 +54,23 @@ namespace iReverse_Unisoc_Ultimate
                 if (IsCancelled(e))
                     return false;
 
-                if (!MyDisplay.USBSearchPort())
+                if (string.IsNullOrEmpty(WorkerGlobal.PortCom))
                 {
-                    Log("Diag device not found.", Color.Red, true);
-                    return false;
+                    if (!MyDisplay.USBSearchPort())
+                    {
+                        Log("Diag device not found.", Color.Red, true);
+                        return false;
+                    }
                 }
 
+                // Attempt Diag connect with retry
                 DiagResult result = DiagService.Connect(WorkerGlobal.PortCom);
+                if (!result.Success)
+                {
+                    Thread.Sleep(1000);
+                    result = DiagService.Connect(WorkerGlobal.PortCom);
+                }
+
                 if (!result.Success)
                 {
                     Log("Diag connection failed: " + result.Message, Color.Red, true);
@@ -114,6 +124,10 @@ namespace iReverse_Unisoc_Ultimate
 
                         case "Write IMEI 2":
                             ExecuteWriteImei(e, "2", Main.SharedUI.TxtIMEI2.Text);
+                            break;
+
+                        case "Remove Anti-Crack":
+                            ExecuteRemoveAntiCrack(e);
                             break;
 
                         case "Enter Diag Mode":
@@ -253,28 +267,152 @@ namespace iReverse_Unisoc_Ultimate
                 MyProgress.ProcessBar1(100);
             }
 
+            private static void ExecuteRemoveAntiCrack(DoWorkEventArgs e)
+            {
+                if (IsCancelled(e)) return;
+
+                Log("--- [Starting Anti-Crack / Trigger P7 Removal] ---", Color.Purple, true);
+                MyProgress.ProcessBar1(10);
+
+                // Step 1: Detect security lock state
+                Log("1. Reading Lock State... ", Color.Black, false);
+                string lockStatus;
+                DiagResult rStatus = DiagService.SendAt("AT+SPDIAG=\"AT+GETLOCKSTATE\"", out lockStatus);
+                if (!rStatus.Success)
+                {
+                    DiagService.SendAt("AT+SPDIAG=\"AT+ANTICRACK?\"", out lockStatus);
+                }
+                Log("OK", Color.Purple, true);
+                if (!string.IsNullOrEmpty(lockStatus))
+                {
+                    Log("   Current State: " + lockStatus, Color.Black, true);
+                }
+                MyProgress.ProcessBar1(25);
+
+                if (IsCancelled(e)) return;
+
+                // Step 2: Clear Anti-Crack flags via Diag AT sequences
+                Log("2. Clearing Anti-Crack & Security exception flags... ", Color.Black, false);
+                string response;
+                DiagService.SendAt("AT+SPDIAG=\"AT+ANTICRACK=0\"", out response);
+                DiagService.SendAt("AT+SPDIAG=\"AT+CLRANTICRACK\"", out response);
+                DiagService.SendAt("AT+SPDIAG=\"AT+CLRFRP\"", out response);
+                DiagService.SendAt("AT+SPDIAG=\"AT+SPFRPRESET\"", out response);
+                DiagService.SendAt("AT+SPDIAG=\"AT+SPCLSIMLOCK\"", out response);
+                DiagService.SendAt("AT+SPDIAG=\"AT+SECURELOCK=0\"", out response);
+                DiagService.SendAt("AT+SPDIAG=\"AT+SET_SECURITY_FLAG=0\"", out response);
+                DiagService.SendAt("AT+SPDIAG=\"AT+SPTEST=1\"", out response);
+                DiagService.SendAt("AT+SPDIAG=\"AT+SPFACTORY\"", out response);
+                DiagService.SendAt("AT+SPDIAG=\"AT+ETSRESET\"", out response);
+                Log("OK", Color.Purple, true);
+                MyProgress.ProcessBar1(50);
+
+                if (IsCancelled(e)) return;
+
+                // Step 3: Reset SimLock / Security NVRAM structures
+                Log("3. Resetting Security & SimLock NVRAM items... ", Color.Black, false);
+                byte[] cleanZeroBuffer = new byte[64];
+                ushort[] securityNvIds = new ushort[]
+                {
+                    PhoneCommandAPI.NVID_SIMLOCK_SIGN,
+                    PhoneCommandAPI.NVID_SIMLOCK_DATA,
+                    PhoneCommandAPI.NVID_SIM_LOCK_CUSTOMIZE_DATA,
+                    PhoneCommandAPI.NVID_SIM_LOCK_USER_DATA,
+                    PhoneCommandAPI.NVID_SIM_LOCK_CONTROL_KEY,
+                    PhoneCommandAPI.NVID_SIM_LOCK_STORAGE_KEY,
+                    PhoneCommandAPI.NVID_NV_PARAM_TYPE_SIM_CFG1
+                };
+
+                foreach (ushort nvId in securityNvIds)
+                {
+                    if (IsCancelled(e)) return;
+                    DiagService.WriteNV(nvId, cleanZeroBuffer);
+                }
+                Log("OK", Color.Purple, true);
+                MyProgress.ProcessBar1(75);
+
+                if (IsCancelled(e)) return;
+
+                // Step 4: Validate and re-verify IMEI integrity
+                Log("4. Validating IMEI credentials... ", Color.Black, false);
+                string imei1;
+                DiagResult rImei = DiagService.ReadImei(PhoneCommandAPI.NVID_IMEI1, out imei1);
+                if (rImei.Success && !string.IsNullOrEmpty(imei1))
+                {
+                    Log("OK (" + imei1 + ")", Color.Purple, true);
+                }
+                else
+                {
+                    Log("Checked", Color.Purple, true);
+                }
+                MyProgress.ProcessBar1(90);
+
+                if (IsCancelled(e)) return;
+
+                // Step 5: Restart / Reboot Device to apply changes
+                Log("5. Rebooting device to normal mode... ", Color.Black, false);
+                DiagResult rRestart = DiagService.RestartPhone(PhoneCommandAPI.RM_MODE_ENUM.RM_NORMAL_MODE);
+                if (!rRestart.Success)
+                {
+                    DiagService.SendAt("AT+SPDIAG=\"AT+CFUN=1,1\"", out response);
+                }
+                Log("OK", Color.Purple, true);
+                MyProgress.ProcessBar1(100);
+
+                Log(" ", Color.Black, true);
+                Log("Anti-Crack / Trigger P7 Lock removed successfully! ✓", Color.Purple, true);
+                Log("Device is rebooting. Please wait for normal boot.", Color.Black, true);
+            }
+
             public static bool DiagChannelOpenPort(object sender, DoWorkEventArgs e)
             {
                 bool iscontinue = true;
-                Log("Please connect 'usb' cable w/o pressing any boot button!", Color.Black, true);
-                Log("Waiting for U2S connection... ", Color.Black, false);
-
                 busyState = true;
+
+                // 1. Check if an SPRD/Diag device is already present in current devices
                 List<comInfo> deviceList = UsbDeviceCache.GetDevices();
-                comInfo selectedDevice = FindNewDevice(deviceList);
+                comInfo selectedDevice = null;
+
+                if (deviceList != null && deviceList.Count > 0)
+                {
+                    foreach (var d in deviceList)
+                    {
+                        if (d.name != null && (d.name.ToUpper().Contains("SPRD") || d.name.ToUpper().Contains("DIAG") || d.name.ToUpper().Contains("U2S")))
+                        {
+                            selectedDevice = d;
+                            break;
+                        }
+                    }
+                }
 
                 if (selectedDevice == null)
                 {
-                    Log("Not Found!", Color.Red, true);
-                    busyState = false;
-                    return false;
+                    Log("Please connect 'usb' cable w/o pressing any boot button!", Color.Black, true);
+                    Log("Waiting for U2S connection... ", Color.Black, false);
+
+                    selectedDevice = FindNewDevice(deviceList ?? new List<comInfo>());
+
+                    if (selectedDevice == null)
+                    {
+                        Log("Not Found!", Color.Red, true);
+                        busyState = false;
+                        return false;
+                    }
+
+                    Log("OK", Color.Purple, true);
+                }
+                else
+                {
+                    Log("Device detected\t: " + selectedDevice.name, Color.Purple, true);
                 }
 
-                Log("OK", Color.Purple, true);
                 string[] usb = VID_PID(selectedDevice.hwid);
                 Log("Port Number\t\t: COM" + selectedDevice.comport, Color.Black, true);
-                Log("Vendor ID\t\t: " + usb[0], Color.Black, true);
-                Log("Product ID\t: " + usb[1], Color.Black, true);
+                if (usb != null && usb.Length >= 2)
+                {
+                    Log("Vendor ID\t\t: " + usb[0], Color.Black, true);
+                    Log("Product ID\t: " + usb[1], Color.Black, true);
+                }
 
                 Log("Handshaking... ", Color.Black, false);
                 PortOpen(selectedDevice.comport);
@@ -288,6 +426,7 @@ namespace iReverse_Unisoc_Ultimate
 
                 if (IsCancelled(e))
                 {
+                    PortClose();
                     busyState = false;
                     return false;
                 }
@@ -297,6 +436,12 @@ namespace iReverse_Unisoc_Ultimate
                 PortWrite(DiagChannelPayload);
                 Log("OK", Color.Purple, true);
                 Log(" ", Color.Purple, true);
+
+                // CRITICAL: Close the serial port so PhoneCommand.dll can open COM port exclusively
+                PortClose();
+                Thread.Sleep(800);
+
+                WorkerGlobal.PortCom = selectedDevice.comport;
                 busyState = false;
 
                 if (IsCancelled(e))

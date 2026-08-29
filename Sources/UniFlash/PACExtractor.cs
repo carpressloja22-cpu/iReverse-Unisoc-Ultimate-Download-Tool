@@ -1,4 +1,4 @@
-﻿using iReverse_Unisoc_Ultimate.MyUI;
+using iReverse_Unisoc_Ultimate.MyUI;
 using iReverse_Unisoc_Ultimate.UniFlash.Worker;
 using System;
 using System.Collections.Generic;
@@ -625,7 +625,7 @@ namespace iReverse_Unisoc_Ultimate
                         }
                         currentCount += 1;
                         MyProgress.ProcessBar2(currentCount, partitionCount - 1);
-                        onFileProgress?.Invoke(fileName, partitionSize, partitionSize);
+                        onFileProgress?.Invoke(fileName, (long)partitionSize, (long)partitionSize);
                     }
                     Console.WriteLine();
                 }

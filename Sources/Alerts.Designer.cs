@@ -43,61 +43,61 @@ namespace iReverse_Unisoc_Ultimate
 			/// </summary>
 			private void InitializeComponent()
 			{
-				this.components = new System.ComponentModel.Container();
-				this.timer1 = new System.Windows.Forms.Timer(this.components);
-				this.pictureBox1 = new System.Windows.Forms.PictureBox();
-				this.lblMsg = new System.Windows.Forms.Label();
-				this.timer2 = new System.Windows.Forms.Timer(this.components);
-				this.pictureBox2 = new System.Windows.Forms.PictureBox();
-				((System.ComponentModel.ISupportInitialize)this.pictureBox1).BeginInit();
-				((System.ComponentModel.ISupportInitialize)this.pictureBox2).BeginInit();
-				this.SuspendLayout();
-				//
-				//pictureBox1
-				//
-				this.pictureBox1.Image = iReverse_Unisoc_Ultimate.Properties.Resources.success;
-				this.pictureBox1.Location = new System.Drawing.Point(17, 18);
-				this.pictureBox1.Name = "pictureBox1";
-				this.pictureBox1.Size = new System.Drawing.Size(41, 39);
-				this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-				this.pictureBox1.TabIndex = 5;
-				this.pictureBox1.TabStop = false;
-				//
-				//lblMsg
-				//
-				this.lblMsg.ForeColor = System.Drawing.Color.White;
-				this.lblMsg.Location = new System.Drawing.Point(70, 18);
-				this.lblMsg.Name = "lblMsg";
-				this.lblMsg.Size = new System.Drawing.Size(403, 47);
-				this.lblMsg.TabIndex = 4;
-				this.lblMsg.Text = "Message Text";
-				//
-				//pictureBox2
-				//
-				this.pictureBox2.Image = iReverse_Unisoc_Ultimate.Properties.Resources.icons8_cancel_25px;
-				this.pictureBox2.Location = new System.Drawing.Point(494, 27);
-				this.pictureBox2.Name = "pictureBox2";
-				this.pictureBox2.Size = new System.Drawing.Size(26, 30);
-				this.pictureBox2.TabIndex = 6;
-				this.pictureBox2.TabStop = false;
-				//
-				//Alerts
-				//
-				this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-				this.BackColor = System.Drawing.SystemColors.Highlight;
-				this.ClientSize = new System.Drawing.Size(534, 74);
-				this.Controls.Add(this.pictureBox1);
-				this.Controls.Add(this.lblMsg);
-				this.Controls.Add(this.pictureBox2);
-				this.Font = new System.Drawing.Font("Century Gothic", 12.0F);
-				this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-				this.Margin = new System.Windows.Forms.Padding(5);
-				this.Name = "Alerts";
-				this.ShowInTaskbar = false;
-				this.Text = "Form_Alert";
-				((System.ComponentModel.ISupportInitialize)this.pictureBox1).EndInit();
-				((System.ComponentModel.ISupportInitialize)this.pictureBox2).EndInit();
-				this.ResumeLayout(false);
+            this.components = new System.ComponentModel.Container();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.lblMsg = new System.Windows.Forms.Label();
+            this.timer2 = new System.Windows.Forms.Timer(this.components);
+            this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            this.SuspendLayout();
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = global::iReverse_Unisoc_Ultimate.Properties.Resources.success;
+            this.pictureBox1.Location = new System.Drawing.Point(17, 18);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(41, 39);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox1.TabIndex = 5;
+            this.pictureBox1.TabStop = false;
+            // 
+            // lblMsg
+            // 
+            this.lblMsg.ForeColor = System.Drawing.Color.White;
+            this.lblMsg.Location = new System.Drawing.Point(70, 18);
+            this.lblMsg.Name = "lblMsg";
+            this.lblMsg.Size = new System.Drawing.Size(403, 47);
+            this.lblMsg.TabIndex = 4;
+            this.lblMsg.Text = "Message Text";
+            // 
+            // pictureBox2
+            // 
+            this.pictureBox2.Image = global::iReverse_Unisoc_Ultimate.Properties.Resources.icons8_cancel_25px;
+            this.pictureBox2.Location = new System.Drawing.Point(505, 2);
+            this.pictureBox2.Name = "pictureBox2";
+            this.pictureBox2.Size = new System.Drawing.Size(26, 26);
+            this.pictureBox2.TabIndex = 6;
+            this.pictureBox2.TabStop = false;
+            // 
+            // Alerts
+            // 
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            this.BackColor = System.Drawing.SystemColors.Highlight;
+            this.ClientSize = new System.Drawing.Size(534, 74);
+            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.lblMsg);
+            this.Controls.Add(this.pictureBox2);
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Margin = new System.Windows.Forms.Padding(5);
+            this.Name = "Alerts";
+            this.ShowInTaskbar = false;
+            this.Text = "Form_Alert";
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            this.ResumeLayout(false);
 
 			}
 

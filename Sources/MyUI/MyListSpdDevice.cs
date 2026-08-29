@@ -1,4 +1,4 @@
-﻿using iReverse_Unisoc_Ultimate.UniFlash.Worker;
+using iReverse_Unisoc_Ultimate.UniFlash.Worker;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

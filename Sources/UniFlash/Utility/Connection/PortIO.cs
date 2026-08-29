@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.IO;
 using System.IO.Ports;
@@ -30,7 +30,7 @@ namespace iReverse_Unisoc_Ultimate
 
             public static void PortClose()
             {
-                if (serialPort.IsOpen)
+                if (serialPort != null && serialPort.IsOpen)
                 {
                     serialPort.Close();
                     serialPort.Dispose();
@@ -39,13 +39,18 @@ namespace iReverse_Unisoc_Ultimate
 
             public static byte[] PortRead()
             {
-                if (!serialPort.IsOpen)
+                if (serialPort == null || !serialPort.IsOpen)
                 {
-                    return new byte[1];
+                    return new byte[0];
                 }
                 int numBytes = serialPort.BytesToRead;
+                if (numBytes <= 0) return new byte[0];
                 byte[] buffer = new byte[numBytes];
-                serialPort.BaseStream.ReadAsync(buffer, 0, numBytes);
+                int bytesRead = serialPort.Read(buffer, 0, numBytes);
+                if (bytesRead < numBytes)
+                {
+                    Array.Resize(ref buffer, bytesRead);
+                }
                 return buffer;
             }
 
@@ -56,7 +61,7 @@ namespace iReverse_Unisoc_Ultimate
 
             public static void PortWrite(byte[] request)
             {
-                if (serialPort.IsOpen)
+                if (serialPort != null && serialPort.IsOpen && request != null && request.Length > 0)
                 {
                     serialPort.Write(request, 0, request.Length);
                     Thread.Sleep(15);

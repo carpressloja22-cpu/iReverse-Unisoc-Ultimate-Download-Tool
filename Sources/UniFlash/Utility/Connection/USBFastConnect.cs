@@ -1,4 +1,4 @@
-﻿using iReverse_Unisoc_Ultimate.UniFlash.Worker;
+using iReverse_Unisoc_Ultimate.UniFlash.Worker;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -326,16 +326,21 @@ namespace iReverse_Unisoc_Ultimate
 
             public static string[] VID_PID(string stream)
             {
-                var array = new string[3];
-                var num = stream.IndexOf("VID_");
-                var text = stream.Substring(num + 4);
-                array[0] = text.Substring(0, 4);
-                var num2 = stream.IndexOf("PID_");
-                var text2 = stream.Substring(num2 + 4);
-                array[1] = text2.Substring(0, 4);
-                var num3 = stream.IndexOf("REV_");
-                var text3 = stream.Substring(num3 + 4);
-                array[2] = text3.Substring(0, 4);
+                var array = new string[3] { "0000", "0000", "0000" };
+                if (string.IsNullOrEmpty(stream)) return array;
+
+                int num = stream.IndexOf("VID_", StringComparison.OrdinalIgnoreCase);
+                if (num >= 0 && stream.Length >= num + 8)
+                    array[0] = stream.Substring(num + 4, 4);
+
+                int num2 = stream.IndexOf("PID_", StringComparison.OrdinalIgnoreCase);
+                if (num2 >= 0 && stream.Length >= num2 + 8)
+                    array[1] = stream.Substring(num2 + 4, 4);
+
+                int num3 = stream.IndexOf("REV_", StringComparison.OrdinalIgnoreCase);
+                if (num3 >= 0 && stream.Length >= num3 + 8)
+                    array[2] = stream.Substring(num3 + 4, 4);
+
                 return array;
             }
 
@@ -354,6 +359,7 @@ namespace iReverse_Unisoc_Ultimate
                         }
                         if (stopwatch.ElapsedMilliseconds <= 30000L)
                         {
+                            System.Threading.Thread.Sleep(50);
                             if (listDevices.Count == 0 || listDevices == oldDevices)
                             {
                                 continue;

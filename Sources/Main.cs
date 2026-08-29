@@ -356,7 +356,6 @@ namespace iReverse_Unisoc_Ultimate
             {
                 MyProgress.WaktuCari = 2;
                 UnisocWorker.CancelAsync();
-                UnisocWorker.Dispose();
                 uni.ProcessKill();
                 uni.Cleaner();
                 MyDisplay.RichLogs(" ", Color.Black, true, true);
@@ -436,7 +435,7 @@ namespace iReverse_Unisoc_Ultimate
 
                 if (flag)
                 {
-                    if (!Validation.FdlValidator.IsValid(uni.fdl1_location))
+                    if (!FdlValidator.IsValid(uni.fdl1_location))
                     {
                         MessageBox.Show(
                             "FDL1 is invalid or missing.",
@@ -447,7 +446,7 @@ namespace iReverse_Unisoc_Ultimate
                         return;
                     }
 
-                    if (File.Exists(uni.fdl2_location) && !Validation.FdlValidator.IsValid(uni.fdl2_location))
+                    if (File.Exists(uni.fdl2_location) && !FdlValidator.IsValid(uni.fdl2_location))
                     {
                         MessageBox.Show(
                             "FDL2 is invalid or missing.",
@@ -489,7 +488,6 @@ namespace iReverse_Unisoc_Ultimate
                     totalchecked = parts.Count + (File.Exists(uni.fdl2_location) ? 2 : 1) + (CkAutoRSAExploit.Checked && !string.IsNullOrEmpty(uni.exploit) ? 1 : 0) + 1;
 
                     UnisocWorker.RunWorkerAsync();
-                    UnisocWorker.Dispose();
                 }
                 else
                 {
@@ -570,7 +568,7 @@ namespace iReverse_Unisoc_Ultimate
 
                     if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                     {
-                        if (!Validation.FdlValidator.IsValid(uni.fdl1_location))
+                        if (!FdlValidator.IsValid(uni.fdl1_location))
                         {
                             MessageBox.Show(
                                 "FDL1 is invalid or missing.",
@@ -581,7 +579,7 @@ namespace iReverse_Unisoc_Ultimate
                             return;
                         }
 
-                        if (File.Exists(uni.fdl2_location) && !Validation.FdlValidator.IsValid(uni.fdl2_location))
+                        if (File.Exists(uni.fdl2_location) && !FdlValidator.IsValid(uni.fdl2_location))
                         {
                             MessageBox.Show(
                                 "FDL2 is invalid or missing.",
@@ -628,7 +626,6 @@ namespace iReverse_Unisoc_Ultimate
                         totalchecked = parts.Count + (File.Exists(uni.fdl2_location) ? 2 : 1) + (CkAutoRSAExploit.Checked && !string.IsNullOrEmpty(uni.exploit) ? 1 : 0) + 1;
 
                         UnisocWorker.RunWorkerAsync();
-                        UnisocWorker.Dispose();
                     }
                 }
             }
@@ -695,7 +692,7 @@ namespace iReverse_Unisoc_Ultimate
 
                 if (flag)
                 {
-                    if (!Validation.FdlValidator.IsValid(uni.fdl1_location))
+                    if (!FdlValidator.IsValid(uni.fdl1_location))
                     {
                         MessageBox.Show(
                             "FDL1 is invalid or missing.",
@@ -706,7 +703,7 @@ namespace iReverse_Unisoc_Ultimate
                         return;
                     }
 
-                    if (File.Exists(uni.fdl2_location) && !Validation.FdlValidator.IsValid(uni.fdl2_location))
+                    if (File.Exists(uni.fdl2_location) && !FdlValidator.IsValid(uni.fdl2_location))
                     {
                         MessageBox.Show(
                             "FDL2 is invalid or missing.",
@@ -745,7 +742,6 @@ namespace iReverse_Unisoc_Ultimate
                     totalchecked = parts.Count + (File.Exists(uni.fdl2_location) ? 2 : 1) + (CkAutoRSAExploit.Checked && !string.IsNullOrEmpty(uni.exploit) ? 1 : 0) + 1;
 
                     UnisocWorker.RunWorkerAsync();
-                    UnisocWorker.Dispose();
                 }
             }
             else
@@ -763,7 +759,7 @@ namespace iReverse_Unisoc_Ultimate
         {
             if (!UnisocWorker.IsBusy)
             {
-                if (!Validation.FdlValidator.IsValid(uni.fdl1_location) || string.IsNullOrEmpty(uni.fdl1_addr))
+                if (!FdlValidator.IsValid(uni.fdl1_location) || string.IsNullOrEmpty(uni.fdl1_addr))
                 {
                     MessageBox.Show(
                         "FDL1 is invalid or address is missing.",
@@ -785,7 +781,45 @@ namespace iReverse_Unisoc_Ultimate
                 totalchecked = (File.Exists(uni.fdl2_location) ? 2 : 1) + (CkAutoRSAExploit.Checked && !string.IsNullOrEmpty(uni.exploit) ? 1 : 0) + 2;
 
                 UnisocWorker.RunWorkerAsync();
-                UnisocWorker.Dispose();
+            }
+            else
+            {
+                MessageBox.Show(
+                    "Worker is running.",
+                    "iReverse Unisoc Ultimate Download Tool - [HadiK-IT]",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+            }
+        }
+
+        private void BtnFixAntiCrackFDL_Click(object sender, EventArgs e)
+        {
+            if (!UnisocWorker.IsBusy)
+            {
+                if (!FdlValidator.IsValid(uni.fdl1_location) || string.IsNullOrEmpty(uni.fdl1_addr))
+                {
+                    MessageBox.Show(
+                        "FDL1 is invalid or address is missing.\nPlease load FDL1/FDL2 or PAC firmware first!",
+                        "Validation Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning
+                    );
+                    return;
+                }
+
+                MyDisplay.RtbClear();
+                MyDisplay.GetButtonText(sender);
+                MyProgress.ProcessBar1(0);
+                MyProgress.ProcessBar2(0);
+                totalchecked = 0;
+                totaldo = 0;
+
+                // Erase all variations of misc/anti-crack and frp/persistent partitions
+                uni.uniCommand = UniCommandBuilder.Build("-erase_frp", "-e miscdata", "-e misc", "-e frp", "-e persistent");
+                totalchecked = (File.Exists(uni.fdl2_location) ? 2 : 1) + (CkAutoRSAExploit.Checked && !string.IsNullOrEmpty(uni.exploit) ? 1 : 0) + 5;
+
+                UnisocWorker.RunWorkerAsync();
             }
             else
             {
@@ -802,7 +836,7 @@ namespace iReverse_Unisoc_Ultimate
         {
             if (!UnisocWorker.IsBusy)
             {
-                if (!Validation.FdlValidator.IsValid(uni.fdl1_location) || string.IsNullOrEmpty(uni.fdl1_addr))
+                if (!FdlValidator.IsValid(uni.fdl1_location) || string.IsNullOrEmpty(uni.fdl1_addr))
                 {
                     Console.WriteLine("Please check fdl1 location : " + uni.fdl1_location);
                     Console.WriteLine("Please check fdl1 address  : " + uni.fdl1_addr);
@@ -827,7 +861,6 @@ namespace iReverse_Unisoc_Ultimate
                 totalchecked = (File.Exists(uni.fdl2_location) ? 2 : 1) + (CkAutoRSAExploit.Checked && !string.IsNullOrEmpty(uni.exploit) ? 1 : 0) + 2;
 
                 UnisocWorker.RunWorkerAsync();
-                UnisocWorker.Dispose();
             }
             else
             {
@@ -1169,7 +1202,6 @@ namespace iReverse_Unisoc_Ultimate
                     TxtPacFirmware.Text = openFileDialog.SafeFileName;
                     UniFirmware = openFileDialog.FileName;
                     UnisocWorker.RunWorkerAsync();
-                    UnisocWorker.Dispose();
                 }
             }
         }
@@ -1203,6 +1235,19 @@ namespace iReverse_Unisoc_Ultimate
                 MyProgress.ProcessBar1(0);
                 MyProgress.ProcessBar2(0);
                 WorkerMethod = "Factory Reset";
+                UnisocWorker.RunWorkerAsync();
+            }
+        }
+
+        private void BtnRemoveAntiCrack_Click(object sender, EventArgs e)
+        {
+            if (!UnisocWorker.IsBusy)
+            {
+                MyDisplay.RtbClear();
+                MyDisplay.GetButtonText(sender);
+                MyProgress.ProcessBar1(0);
+                MyProgress.ProcessBar2(0);
+                WorkerMethod = "Remove Anti-Crack";
                 UnisocWorker.RunWorkerAsync();
             }
         }

@@ -10,7 +10,7 @@
     </StartupObject>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>iReverse_Unisoc_Ultimate</RootNamespace>
-    <AssemblyName>iReverse Unisoc Ultimate Download Tool</AssemblyName>
+    <AssemblyName>iReverse Unisoc</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>WindowsForms</MyType>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
@@ -109,7 +109,9 @@
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="System" />
+    <Reference Include="System">
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.dll</HintPath>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
@@ -182,6 +184,7 @@
     <Compile Include="MyUI\TabStyleProviders\TabStyleiReverseProvider.cs" />
     <Compile Include="MyUI\TabStyleProviders\TabStyleNoneProvider.cs" />
     <Compile Include="MyUI\ThemeEngine.cs" />
+    <Compile Include="MyUI\UsbDeviceCache.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -194,12 +197,18 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="UniFlash\UniCommandBuilder.cs" />
+    <Compile Include="UniFlash\Validation\FdlValidator.cs" />
     <Compile Include="UniFlash\Utility\Connection\API\PhoneCommandAPI.cs" />
     <Compile Include="UniFlash\Utility\Connection\DiagChannel.cs" />
     <Compile Include="UniFlash\Utility\Connection\DiagResult.cs" />
     <Compile Include="UniFlash\Utility\Connection\DiagService.cs" />
     <Compile Include="UniFlash\Utility\Connection\PortIO.cs" />
     <Compile Include="UniFlash\Utility\Connection\USBFastConnect.cs" />
+    <Compile Include="UniFlash\Utility\Diag\DiagOperation.cs" />
+    <Compile Include="UniFlash\Utility\Diag\DiagResult.cs" />
+    <Compile Include="UniFlash\Utility\Diag\DiagService.cs" />
+    <Compile Include="UniFlash\Worker\WorkerBase.cs" />
     <Compile Include="UniFlash\Worker\WorkerGlobal.cs" />
     <Compile Include="UniFlash\Worker\WorkerDiagChannel.cs" />
     <Compile Include="UniFlash\Worker\WorkerUnlock.cs" />
