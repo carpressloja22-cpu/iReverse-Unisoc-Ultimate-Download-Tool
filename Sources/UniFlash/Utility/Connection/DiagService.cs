@@ -377,21 +377,21 @@ namespace iReverse_Unisoc_Ultimate.Utility.Connection
         }
 
         // ────────────────────────────────────────────────────────────────────────
-        // Private helpers — SPRD DIAG packet builders
+        // Public helpers — SPRD DIAG packet builders
         // ────────────────────────────────────────────────────────────────────────
 
         /// <summary>
         /// Builds a SPRD DIAG NV-write packet (command 0x7B):
         /// [CMD=0x7B][NV_ID_L][NV_ID_H][data padded to dataLen][CRC16_L][CRC16_H]
         /// </summary>
-        private static byte[] BuildSprdNvWritePacket(ushort nvId, byte[] data)
+        public static byte[] BuildSprdNvWritePacket(ushort nvId, byte[] data)
         {
-            int totalLen = 1 + 2 + data.Length + 2; // cmd + nvid + data + crc
+            int totalLen = 1 + 2 + data.Length + 2;
             byte[] pkt = new byte[totalLen];
             int pos = 0;
-            pkt[pos++] = 0x7B;                      // DIAG_NV_WRITE
-            pkt[pos++] = (byte)(nvId & 0xFF);        // NV ID low byte
-            pkt[pos++] = (byte)((nvId >> 8) & 0xFF); // NV ID high byte
+            pkt[pos++] = 0x7B;
+            pkt[pos++] = (byte)(nvId & 0xFF);
+            pkt[pos++] = (byte)((nvId >> 8) & 0xFF);
             Buffer.BlockCopy(data, 0, pkt, pos, data.Length);
             pos += data.Length;
             ushort crc = Crc16Ccitt(pkt, 0, pos);
@@ -404,7 +404,7 @@ namespace iReverse_Unisoc_Ultimate.Utility.Connection
         /// Builds a SPRD OEM DIAG packet with given command byte and payload.
         /// [CMD][...payload][CRC16_L][CRC16_H]
         /// </summary>
-        private static byte[] BuildSprdOemPacket(byte cmd, byte[] payload)
+        public static byte[] BuildSprdOemPacket(byte cmd, byte[] payload)
         {
             int totalLen = 1 + payload.Length + 2;
             byte[] pkt = new byte[totalLen];
@@ -421,7 +421,7 @@ namespace iReverse_Unisoc_Ultimate.Utility.Connection
         /// <summary>
         /// CRC16-CCITT (poly 0x1021, init 0xFFFF) — the checksum used by SPRD DIAG.
         /// </summary>
-        private static ushort Crc16Ccitt(byte[] data, int offset, int length)
+        public static ushort Crc16Ccitt(byte[] data, int offset, int length)
         {
             ushort crc = 0xFFFF;
             for (int i = offset; i < offset + length; i++)

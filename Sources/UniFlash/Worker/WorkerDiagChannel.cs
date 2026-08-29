@@ -272,48 +272,63 @@ namespace iReverse_Unisoc_Ultimate
                 if (IsCancelled(e)) return;
 
                 Log("--- [Starting Anti-Crack / Trigger P7 Removal] ---", Color.Purple, true);
-                MyProgress.ProcessBar1(10);
+                MyProgress.ProcessBar1(5);
 
-                // Step 1: Detect security lock state
+                // ── Detect lock state ─────────────────────────────────────────
+                string lockStatus = string.Empty;
                 Log("1. Reading Lock State... ", Color.Black, false);
-                string lockStatus;
                 DiagResult rStatus = DiagService.SendAt("AT+SPDIAG=\"AT+GETLOCKSTATE\"", out lockStatus);
-                if (!rStatus.Success)
+                if (!rStatus.Success || string.IsNullOrEmpty(lockStatus))
                 {
                     DiagService.SendAt("AT+SPDIAG=\"AT+ANTICRACK?\"", out lockStatus);
                 }
                 Log("OK", Color.Purple, true);
                 if (!string.IsNullOrEmpty(lockStatus))
-                {
                     Log("   Current State: " + lockStatus, Color.Black, true);
-                }
-                MyProgress.ProcessBar1(25);
+                MyProgress.ProcessBar1(10);
 
                 if (IsCancelled(e)) return;
 
-                // Step 2: Clear Anti-Crack flags via Diag AT sequences
-                Log("2. Clearing Anti-Crack & Security exception flags... ", Color.Black, false);
+                // ── Method A: AT command sequences ────────────────────────────
+                bool methodASuccess = false;
+                Log("2A. Trying AT command sequences... ", Color.Black, false);
                 string response;
-                DiagService.SendAt("AT+SPDIAG=\"AT+ANTICRACK=0\"", out response);
-                DiagService.SendAt("AT+SPDIAG=\"AT+CLRANTICRACK\"", out response);
-                DiagService.SendAt("AT+SPDIAG=\"AT+CLRFRP\"", out response);
-                DiagService.SendAt("AT+SPDIAG=\"AT+SPFRPRESET\"", out response);
-                DiagService.SendAt("AT+SPDIAG=\"AT+SPCLSIMLOCK\"", out response);
-                DiagService.SendAt("AT+SPDIAG=\"AT+SECURELOCK=0\"", out response);
-                DiagService.SendAt("AT+SPDIAG=\"AT+SET_SECURITY_FLAG=0\"", out response);
-                DiagService.SendAt("AT+SPDIAG=\"AT+SPTEST=1\"", out response);
-                DiagService.SendAt("AT+SPDIAG=\"AT+SPFACTORY\"", out response);
-                DiagService.SendAt("AT+SPDIAG=\"AT+ETSRESET\"", out response);
-                Log("OK", Color.Purple, true);
-                MyProgress.ProcessBar1(50);
+                string[] atCommands = new string[]
+                {
+                    "AT+SPDIAG=\"AT+ANTICRACK=0\"",
+                    "AT+SPDIAG=\"AT+CLRANTICRACK\"",
+                    "AT+SPDIAG=\"AT+CLRFRP\"",
+                    "AT+SPDIAG=\"AT+SPFRPRESET\"",
+                    "AT+SPDIAG=\"AT+SPCLSIMLOCK\"",
+                    "AT+SPDIAG=\"AT+SECURELOCK=0\"",
+                    "AT+SPDIAG=\"AT+SET_SECURITY_FLAG=0\"",
+                    "AT+SPDIAG=\"AT+SPTEST=1\"",
+                    "AT+SPDIAG=\"AT+SPFACTORY\"",
+                    "AT+SPDIAG=\"AT+ETSRESET\""
+                };
+
+                foreach (string cmd in atCommands)
+                {
+                    if (IsCancelled(e)) return;
+                    DiagResult r = DiagService.SendAt(cmd, out response);
+                    Log("   " + cmd.Substring(cmd.Length - 20) + " => " + (r.Success ? "OK" : "FAIL"), Color.Black, true);
+                    if (r.Success) methodASuccess = true;
+                }
+                Log("Method A: " + (methodASuccess ? "Partial/Full success" : "No response"), Color.Purple, true);
+                MyProgress.ProcessBar1(30);
 
                 if (IsCancelled(e)) return;
 
-                // Step 3: Reset SimLock / Security NVRAM structures
-                Log("3. Resetting Security & SimLock NVRAM items... ", Color.Black, false);
-                byte[] cleanZeroBuffer = new byte[64];
-                ushort[] securityNvIds = new ushort[]
+                // ── Method B: Raw DIAG NV-write packets ───────────────────────
+                bool methodBSuccess = false;
+                Log("2B. Trying raw DIAG NV-write packets... ", Color.Black, false);
+                ushort[] antiCrackNvIds = new ushort[]
                 {
+                    PhoneCommandAPI.NVID_ANTI_CRACK_FLAG,
+                    PhoneCommandAPI.NVID_SECURITY_STATE,
+                    PhoneCommandAPI.NVID_SIM_LOCK_EX_DATA,
+                    PhoneCommandAPI.NVID_SIM_CFG2,
+                    PhoneCommandAPI.NVID_ANTI_CRACK_EXT,
                     PhoneCommandAPI.NVID_SIMLOCK_SIGN,
                     PhoneCommandAPI.NVID_SIMLOCK_DATA,
                     PhoneCommandAPI.NVID_SIM_LOCK_CUSTOMIZE_DATA,
@@ -323,34 +338,65 @@ namespace iReverse_Unisoc_Ultimate
                     PhoneCommandAPI.NVID_NV_PARAM_TYPE_SIM_CFG1
                 };
 
-                foreach (ushort nvId in securityNvIds)
+                foreach (ushort nvId in antiCrackNvIds)
                 {
                     if (IsCancelled(e)) return;
-                    DiagService.WriteNV(nvId, cleanZeroBuffer);
+                    byte[] zeroData = new byte[128];
+                    DiagResult r = DiagService.WriteNV(nvId, zeroData);
+                    Log("   NV 0x" + nvId.ToString("X") + " => " + (r.Success ? "OK" : "FAIL"), Color.Black, true);
+                    if (r.Success) methodBSuccess = true;
                 }
-                Log("OK", Color.Purple, true);
+                Log("Method B: " + (methodBSuccess ? "Partial/Full success" : "No response"), Color.Purple, true);
+                MyProgress.ProcessBar1(50);
+
+                if (IsCancelled(e)) return;
+
+                // ── Method C: OEM DIAG phase-clear packets ────────────────────
+                bool methodCSuccess = false;
+                Log("2C. Trying OEM DIAG phase-clear packets... ", Color.Black, false);
+                byte[] phaseClrPacket = DiagService.BuildSprdOemPacket(0x89, new byte[] { 0x03, 0x00, 0x00, 0x00 });
+                byte[] phaseClrAlt = DiagService.BuildSprdOemPacket(0x89, new byte[] { 0x06, 0x00, 0x00, 0x00 });
+                byte[] reply;
+                DiagResult rPhase = DiagService.SendRawDiagPacket(phaseClrPacket, out reply);
+                Log("   OEM 0x89/0x03 => " + (rPhase.Success ? "OK" : "FAIL"), Color.Black, true);
+                if (rPhase.Success) methodCSuccess = true;
+
+                DiagResult rPhaseAlt = DiagService.SendRawDiagPacket(phaseClrAlt, out reply);
+                Log("   OEM 0x89/0x06 => " + (rPhaseAlt.Success ? "OK" : "FAIL"), Color.Black, true);
+                if (rPhaseAlt.Success) methodCSuccess = true;
+                Log("Method C: " + (methodCSuccess ? "Partial/Full success" : "No response"), Color.Purple, true);
+                MyProgress.ProcessBar1(65);
+
+                if (IsCancelled(e)) return;
+
+                // ── Method D: Customer factory reset via DIAG ─────────────────
+                bool methodDSuccess = false;
+                Log("2D. Trying customer factory reset... ", Color.Black, false);
+                DiagResult rCustomer = DiagService.CustomerPhoneReset();
+                Log("   SP_CustomerPhoneOp(FACTORY_RESET) => " + (rCustomer.Success ? "OK" : "FAIL"), Color.Black, true);
+                if (rCustomer.Success) methodDSuccess = true;
+                Log("Method D: " + (methodDSuccess ? "Success" : "No response"), Color.Purple, true);
                 MyProgress.ProcessBar1(75);
 
+                // ── Verification: read back NV items ─────────────────────────
+                Log("3. Verifying NV items... ", Color.Black, false);
+                bool verified = true;
+                foreach (ushort nvId in antiCrackNvIds)
+                {
+                    if (IsCancelled(e)) return;
+                    byte[] data;
+                    DiagResult rRead = DiagService.ReadNV(nvId, out data);
+                    bool isZero = data != null && data.Length > 0 && Array.TrueForAll(data, b => b == 0);
+                    Log("   NV 0x" + nvId.ToString("X") + " => " + (isZero ? "CLEARED" : "NOT CLEARED"), isZero ? Color.Purple : Color.Orange, true);
+                    if (!isZero) verified = false;
+                }
+                Log("Verification: " + (verified ? "All NV items cleared" : "Some NV items remain"), verified ? Color.Purple : Color.Orange, true);
+                MyProgress.ProcessBar1(85);
+
                 if (IsCancelled(e)) return;
 
-                // Step 4: Validate and re-verify IMEI integrity
-                Log("4. Validating IMEI credentials... ", Color.Black, false);
-                string imei1;
-                DiagResult rImei = DiagService.ReadImei(PhoneCommandAPI.NVID_IMEI1, out imei1);
-                if (rImei.Success && !string.IsNullOrEmpty(imei1))
-                {
-                    Log("OK (" + imei1 + ")", Color.Purple, true);
-                }
-                else
-                {
-                    Log("Checked", Color.Purple, true);
-                }
-                MyProgress.ProcessBar1(90);
-
-                if (IsCancelled(e)) return;
-
-                // Step 5: Restart / Reboot Device to apply changes
-                Log("5. Rebooting device to normal mode... ", Color.Black, false);
+                // ── Final reboot ─────────────────────────────────────────────
+                Log("4. Rebooting device to normal mode... ", Color.Black, false);
                 DiagResult rRestart = DiagService.RestartPhone(PhoneCommandAPI.RM_MODE_ENUM.RM_NORMAL_MODE);
                 if (!rRestart.Success)
                 {
@@ -360,7 +406,18 @@ namespace iReverse_Unisoc_Ultimate
                 MyProgress.ProcessBar1(100);
 
                 Log(" ", Color.Black, true);
-                Log("Anti-Crack / Trigger P7 Lock removed successfully! ✓", Color.Purple, true);
+                bool anySuccess = methodASuccess || methodBSuccess || methodCSuccess || methodDSuccess;
+                if (anySuccess)
+                {
+                    Log("Anti-Crack / Trigger P7 removal attempted with multiple methods.", Color.Purple, true);
+                    Log("If lock persists, the protection may be in bootloader/miscdata partition.", Color.Orange, true);
+                    Log("Try flashing a clean firmware or using Download Mode erase.", Color.Black, true);
+                }
+                else
+                {
+                    Log("Anti-Crack removal failed — no method responded.", Color.Red, true);
+                    Log("This firmware variant may not support these commands.", Color.Red, true);
+                }
                 Log("Device is rebooting. Please wait for normal boot.", Color.Black, true);
             }
 
