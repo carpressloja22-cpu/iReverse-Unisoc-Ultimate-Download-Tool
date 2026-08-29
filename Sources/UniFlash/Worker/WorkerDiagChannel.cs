@@ -1,13 +1,11 @@
-﻿using iReverse_Unisoc_Ultimate.MyUI;
+using iReverse_Unisoc_Ultimate.MyUI;
 using iReverse_Unisoc_Ultimate.Utility.Connection;
 using iReverse_Unisoc_Ultimate.Utility.Connection.API;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Runtime.InteropServices;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using static iReverse_Unisoc_Ultimate.Utility.Connection.PortIO;
 using static iReverse_Unisoc_Ultimate.Utility.Connection.USBFastConnect;
@@ -21,230 +19,245 @@ namespace iReverse_Unisoc_Ultimate
             public static bool busyState = false;
             public static byte[] DiagChannelPayload = uni.StringToByteArray("7E 00 00 00 00 08 00 FE 81 7E");
 
-            private static bool CheckCancellation(DoWorkEventArgs e, IntPtr buffer, byte[] data)
+            private static bool IsCancelled(DoWorkEventArgs e)
             {
-                if (Main.SharedUI.UnisocWorker.CancellationPending)
+                if (!Main.SharedUI.UnisocWorker.CancellationPending)
+                    return false;
+
+                e.Cancel = true;
+                return true;
+            }
+
+            private static void SetDiagConnected(bool value)
+            {
+                if (Main.SharedUI == null || Main.SharedUI.CkDiagConnected == null)
+                    return;
+
+                Main.SharedUI.CkDiagConnected.Invoke(
+                    (Action)(() => Main.SharedUI.CkDiagConnected.Checked = value)
+                );
+            }
+
+            private static void Log(string text, Color color, bool newline)
+            {
+                MyDisplay.RichLogs(text, color, true, newline);
+            }
+
+            private static bool EnsureConnection(object sender, DoWorkEventArgs e)
+            {
+                if (IsCancelled(e))
+                    return false;
+
+                if (!DiagChannelOpenPort(sender, e))
+                    return false;
+
+                if (IsCancelled(e))
+                    return false;
+
+                if (!MyDisplay.USBSearchPort())
                 {
-                    e.Cancel = true;
-                    DiagChannel.DiagClose();
-                    Marshal.Copy(buffer, data, 0, (int)buffer.Length);
-                    Marshal.FreeHGlobal(buffer);
-                    return true;
+                    Log("Diag device not found.", Color.Red, true);
+                    return false;
                 }
-                return false;
+
+                DiagResult result = DiagService.Connect(WorkerGlobal.PortCom);
+                if (!result.Success)
+                {
+                    Log("Diag connection failed: " + result.Message, Color.Red, true);
+                    return false;
+                }
+
+                SetDiagConnected(true);
+                Log("Diag channel connected.", Color.Purple, true);
+                return true;
             }
 
             public static void UniWorkerDiagChannel(object sender, DoWorkEventArgs e)
             {
-                uint bufferLength = 1024;
-                IntPtr buffer = Marshal.AllocHGlobal((int)bufferLength);
-                byte[] data = new byte[(int)bufferLength];
-                byte[] imeiBuffer1 = new byte[PhoneCommandAPI.MAX_IMEI_STR_LENGTH];
-                byte[] imeiBuffer2 = new byte[PhoneCommandAPI.MAX_IMEI_STR_LENGTH];
+                busyState = true;
+                try
+                {
+                    Log("Operation\t: ", Color.Black, false);
+                    Log(MyDisplay.MyOperation, Color.Purple, true);
 
-                if (!Main.SharedUI.CkDiagConnected.Checked)
-                {
-                    if (DiagChannelOpenPort(sender, e))
-                    {
-                        if (MyDisplay.USBSearchPort())
-                        {
-                            DiagChannel.DiagConnect(WorkerGlobal.PortCom);
-                            Main.SharedUI.CkDiagConnected.Invoke((Action)(() => Main.SharedUI.CkDiagConnected.Checked = true));
-                        }
-                        else
-                        {
-                            Main.SharedUI.CkDiagConnected.Invoke((Action)(() => Main.SharedUI.CkDiagConnected.Checked = false));
-                            Thread.Sleep(1000);
-                            Main.SharedUI.UnisocWorker.CancelAsync();
-                            return;
-                        }
-                    }
-                }
-                else
-                {
-                    if (MyDisplay.USBSearchPort())
-                    {
-                        DiagChannel.DiagConnect(WorkerGlobal.PortCom);
-                    }
-                    else
-                    {
-                        Main.SharedUI.CkDiagConnected.Invoke((Action)(() => Main.SharedUI.CkDiagConnected.Checked = false));
-                        Thread.Sleep(1000);
-                        Main.SharedUI.UnisocWorker.CancelAsync();
+                    if (!EnsureConnection(sender, e))
                         return;
+
+                    if (IsCancelled(e))
+                        return;
+
+                    LogDiagContext(e);
+                    if (IsCancelled(e))
+                        return;
+
+                    switch (WorkerGlobal.WorkerMethod)
+                    {
+                        case "Factory Reset":
+                            ExecuteFactoryReset(e);
+                            break;
+
+                        case "Power Off":
+                            ExecutePowerOff(e);
+                            break;
+
+                        case "Send ATCommand":
+                            ExecuteSendAt(e);
+                            break;
+
+                        case "Read IMEI":
+                            ExecuteReadImei(e);
+                            break;
+
+                        case "Write IMEI 1":
+                            ExecuteWriteImei(e, "1", Main.SharedUI.TxtIMEI1.Text);
+                            break;
+
+                        case "Write IMEI 2":
+                            ExecuteWriteImei(e, "2", Main.SharedUI.TxtIMEI2.Text);
+                            break;
+
+                        case "Enter Diag Mode":
+                            Log("Diag mode is already active.", Color.Purple, true);
+                            MyProgress.ProcessBar1(100);
+                            break;
+
+                        default:
+                            Log("Unsupported Diag operation: " + WorkerGlobal.WorkerMethod, Color.Red, true);
+                            break;
                     }
                 }
-
-                if (CheckCancellation(e, buffer, data))
-                    return;
-
-                MyDisplay.RichLogs("Operation " + "\t" + ": ", Color.Black, true, false);
-                MyDisplay.RichLogs(MyDisplay.MyOperation, Color.Purple, true, true);
-
-                MyDisplay.RichLogs("Get Information... ", Color.Black, true, false);
-                Thread.Sleep(1000);
-                MyDisplay.RichLogs("OK", Color.Purple, true, true);
-
-                MyDisplay.RichLogs("SW Info " + "\t" + ": ", Color.Black, true, false);
-                int result = PhoneCommandAPI.SP_GetAPVersion(
-                    DiagChannel.hDiagPhone,
-                    buffer,
-                    bufferLength
-                );
-                if (result == 0)
+                catch (Exception ex)
                 {
-                    string productInfo = Marshal.PtrToStringAnsi(buffer);
-                    MyDisplay.RichLogs(productInfo, Color.Black, true, true);
+                    Log("Diag error: " + ex.Message, Color.Red, true);
+                    Console.WriteLine(ex);
                 }
+                finally
+                {
+                    DiagChannel.DiagClose();
+                    try { PortClose(); } catch (Exception closeEx) { Console.WriteLine("PortClose: " + closeEx.Message); }
+                    SetDiagConnected(false);
+                    busyState = false;
+                }
+            }
+
+            private static void LogDiagContext(DoWorkEventArgs e)
+            {
+                if (IsCancelled(e)) return;
+
+                string version;
+                DiagResult result = DiagService.ReadApVersion(out version);
+                if (result.Success && !string.IsNullOrEmpty(version))
+                    Log("SW Info\t: " + version, Color.Black, true);
                 else
-                {
-                    MyDisplay.RichLogs(",", Color.Black, true, true);
-                }
+                    Log("SW Info\t: unavailable", Color.Black, true);
+            }
 
-                MyDisplay.RichLogs("IMEI 1 " + "\t" + "\t" + ": ", Color.Black, true, false);
-                result = PhoneCommandAPI.SP_ReadImei(
-                    DiagChannel.hDiagPhone,
-                    PhoneCommandAPI.NVID_IMEI1,
-                    imeiBuffer1
-                );
-                if (result == 0)
-                {
-                    string imeiString1 = Encoding.ASCII.GetString(imeiBuffer1);
-                    MyDisplay.RichLogs(imeiString1, Color.Black, true, true);
-                }
-                else
-                {
-                    MyDisplay.RichLogs(",", Color.Black, true, true);
-                }
-                MyProgress.ProcessBar1(50);
+            private static void ExecuteFactoryReset(DoWorkEventArgs e)
+            {
+                if (IsCancelled(e)) return;
 
-                MyDisplay.RichLogs("IMEI 2 " + "\t" + "\t" + ": ", Color.Black, true, false);
-                result = PhoneCommandAPI.SP_ReadImei(
-                    DiagChannel.hDiagPhone,
-                    PhoneCommandAPI.NVID_IMEI2,
-                    imeiBuffer2
+                MyProgress.ProcessBar1(25);
+                string response;
+                DiagResult result = DiagService.SendAt(
+                    "AT+SPDIAG=\"AT+ETSRESET\"",
+                    out response
                 );
-                if (result == 0)
-                {
-                    string imeiString2 = Encoding.ASCII.GetString(imeiBuffer2);
-                    MyDisplay.RichLogs(imeiString2, Color.Black, true, true);
-                }
-                else
-                {
-                    MyDisplay.RichLogs(",", Color.Black, true, true);
-                }
+
+                Log(result.Success ? "Factory reset command accepted." : "Factory reset command failed: " + result.Message,
+                    result.Success ? Color.Purple : Color.Red, true);
+                if (!string.IsNullOrEmpty(response))
+                    Log("Response: " + response, Color.Black, true);
+
                 MyProgress.ProcessBar1(100);
+            }
 
-                if (WorkerGlobal.WorkerMethod == "Factory Reset")
-                {
-                    if (CheckCancellation(e, buffer, data))
-                        return;
-                    MyProgress.ProcessBar1(50);
-                    string strResponse = string.Empty;
-                    SendAT(DiagChannel.hDiagPhone, "AT+SPDIAG=\"AT+ETSRESET\"", ref strResponse);
-                    Console.WriteLine("AT Command Resp : " + strResponse);
-                    MyProgress.ProcessBar1(100);
+            private static void ExecutePowerOff(DoWorkEventArgs e)
+            {
+                if (IsCancelled(e)) return;
 
-                    Main.SharedUI.CkDiagConnected.Invoke(
-                        (Action)(() => Main.SharedUI.CkDiagConnected.Checked = false)
-                    );
-                }
-                else if (WorkerGlobal.WorkerMethod == "Power Off")
-                {
-                    if (CheckCancellation(e, buffer, data))
-                        return;
-                    MyProgress.ProcessBar1(50);
-                    PhoneCommandAPI.SP_PowerOff(DiagChannel.hDiagPhone);
-                    MyProgress.ProcessBar1(100);
+                MyProgress.ProcessBar1(25);
+                int result = PhoneCommandAPI.SP_PowerOff(DiagChannel.hDiagPhone);
+                if (result == 0)
+                    Log("Power off command accepted.", Color.Purple, true);
+                else
+                    Log("Power off failed, error " + result, Color.Red, true);
+                MyProgress.ProcessBar1(100);
+            }
 
-                    Main.SharedUI.CkDiagConnected.Invoke(
-                        (Action)(() => Main.SharedUI.CkDiagConnected.Checked = false)
-                    );
-                }
-                else if (WorkerGlobal.WorkerMethod == "Send ATCommand")
-                {
-                    if (CheckCancellation(e, buffer, data))
-                        return;
-                    MyProgress.ProcessBar1(50);
-                    string strResponse = string.Empty;
-                    SendAT(
-                        DiagChannel.hDiagPhone,
-                        Main.SharedUI.TxtATCommand.Text,
-                        ref strResponse
-                    );
-                    Console.WriteLine("AT Command Resp : " + strResponse);
-                    MyProgress.ProcessBar1(100);
-                }
-                else if (WorkerGlobal.WorkerMethod == "Read IMEI")
-                {
-                    if (CheckCancellation(e, buffer, data))
-                        return;
-                    result = PhoneCommandAPI.SP_ReadImei(
-                        DiagChannel.hDiagPhone,
-                        PhoneCommandAPI.NVID_IMEI1,
-                        imeiBuffer1
-                    );
-                    if (result == 0)
-                    {
-                        string imeiString1 = Encoding.ASCII.GetString(imeiBuffer1);
-                        Main.SharedUI.TxtIMEI1.Invoke(
-                            (Action)(() => Main.SharedUI.TxtIMEI1.Text = imeiString1)
-                        );
-                    }
+            private static void ExecuteSendAt(DoWorkEventArgs e)
+            {
+                if (IsCancelled(e)) return;
 
-                    MyProgress.ProcessBar1(50);
+                string command = Main.SharedUI.TxtATCommand.Text;
+                MyProgress.ProcessBar1(25);
+                string response;
+                DiagResult result = DiagService.SendAt(command, out response);
 
-                    result = PhoneCommandAPI.SP_ReadImei(
-                        DiagChannel.hDiagPhone,
-                        PhoneCommandAPI.NVID_IMEI2,
-                        imeiBuffer2
-                    );
-                    if (result == 0)
-                    {
-                        string imeiString2 = Encoding.ASCII.GetString(imeiBuffer2);
-                        Main.SharedUI.TxtIMEI2.Invoke(
-                            (Action)(() => Main.SharedUI.TxtIMEI2.Text = imeiString2)
-                        );
-                    }
+                Log(result.Success ? "OK" : "FAIL, Error " + result.NativeResult,
+                    result.Success ? Color.Purple : Color.Red, true);
+                if (!string.IsNullOrEmpty(response))
+                    Log("Response: " + response, Color.Black, true);
+                MyProgress.ProcessBar1(100);
+            }
 
-                    MyProgress.ProcessBar1(100);
-                }
-                else if (WorkerGlobal.WorkerMethod == "Write IMEI 1")
+            private static void ExecuteReadImei(DoWorkEventArgs e)
+            {
+                if (IsCancelled(e)) return;
+
+                string imei1;
+                string imei2;
+                DiagResult r1 = DiagService.ReadImei(PhoneCommandAPI.NVID_IMEI1, out imei1);
+                MyProgress.ProcessBar1(25);
+                DiagResult r2 = DiagService.ReadImei(PhoneCommandAPI.NVID_IMEI2, out imei2);
+
+                if (r1.Success)
+                    Main.SharedUI.TxtIMEI1.Invoke((Action)(() => Main.SharedUI.TxtIMEI1.Text = imei1));
+                if (r2.Success)
+                    Main.SharedUI.TxtIMEI2.Invoke((Action)(() => Main.SharedUI.TxtIMEI2.Text = imei2));
+
+                Log("IMEI 1: " + (r1.Success ? imei1 : "FAIL " + r1.NativeResult),
+                    r1.Success ? Color.Black : Color.Red, true);
+                Log("IMEI 2: " + (r2.Success ? imei2 : "FAIL " + r2.NativeResult),
+                    r2.Success ? Color.Black : Color.Red, true);
+                MyProgress.ProcessBar1(100);
+            }
+
+            private static void ExecuteWriteImei(DoWorkEventArgs e, string number, string imei)
+            {
+                if (IsCancelled(e)) return;
+
+                ushort nvId;
+                if (number == "1")
+                    nvId = PhoneCommandAPI.NVID_IMEI1;
+                else if (number == "2")
+                    nvId = PhoneCommandAPI.NVID_IMEI2;
+                else
                 {
-                    if (CheckCancellation(e, buffer, data))
-                        return;
-                    MyDisplay.RichLogs(" ", Color.Black, true, true);
-                    MyProgress.ProcessBar1(50);
-                    string i1 = Main.SharedUI.TxtIMEI1.Text;
-                    RestoreImei(i1, "1", DiagChannel.hDiagPhone);
-                    MyProgress.ProcessBar1(100);
-                }
-                else if (WorkerGlobal.WorkerMethod == "Write IMEI 2")
-                {
-                    if (CheckCancellation(e, buffer, data))
-                        return;
-                    MyDisplay.RichLogs(" ", Color.Black, true, true);
-                    MyProgress.ProcessBar1(50);
-                    string i2 = Main.SharedUI.TxtIMEI2.Text;
-                    RestoreImei(i2, "2", DiagChannel.hDiagPhone);
-                    MyProgress.ProcessBar1(100);
+                    Log("Invalid IMEI number.", Color.Red, true);
+                    return;
                 }
 
-                DiagChannel.DiagClose();
-                Marshal.Copy(buffer, data, 0, (int)bufferLength);
-                Marshal.FreeHGlobal(buffer);
+                if (string.IsNullOrWhiteSpace(imei) || imei.Trim().Length != 15)
+                {
+                    Log("Invalid IMEI " + number + ". Expected 15 digits.", Color.Red, true);
+                    return;
+                }
+
+                MyProgress.ProcessBar1(25);
+                Log("WRITE IMEI " + number + " : " + imei + "... ", Color.Black, false);
+                int result = PhoneCommandAPI.SP_WriteImei(DiagChannel.hDiagPhone, nvId, imei.Trim());
+                if (result == 0)
+                    Log("OK", Color.Purple, true);
+                else
+                    Log("FAIL, Error " + result, Color.Red, true);
+                MyProgress.ProcessBar1(100);
             }
 
             public static bool DiagChannelOpenPort(object sender, DoWorkEventArgs e)
             {
                 bool iscontinue = true;
-                MyDisplay.RichLogs(
-                    "Please connect 'usb' cable w/o pressing any boot button!",
-                    Color.Black,
-                    true,
-                    true
-                );
-                MyDisplay.RichLogs("Waiting for U2S connection... ", Color.Black, true, false);
+                Log("Please connect 'usb' cable w/o pressing any boot button!", Color.Black, true);
+                Log("Waiting for U2S connection... ", Color.Black, false);
 
                 busyState = true;
                 List<comInfo> deviceList = UsbDeviceCache.GetDevices();
@@ -252,207 +265,47 @@ namespace iReverse_Unisoc_Ultimate
 
                 if (selectedDevice == null)
                 {
-                    MyDisplay.RichLogs("Not Found!", Color.Red, true, true);
+                    Log("Not Found!", Color.Red, true);
                     busyState = false;
-                    iscontinue = false;
                     return false;
                 }
-                else
-                {
-                    MyDisplay.RichLogs("OK", Color.Purple, true, true);
-                    string[] usb = VID_PID(selectedDevice.hwid);
-                    MyDisplay.RichLogs(
-                        "Port Number " + "\t" + "\t" + ": COM" + selectedDevice.comport,
-                        Color.Black,
-                        true,
-                        true
-                    );
-                    MyDisplay.RichLogs(
-                        "Vendor ID " + "\t" + "\t" + ": " + usb[0],
-                        Color.Black,
-                        true,
-                        true
-                    );
-                    MyDisplay.RichLogs(
-                        "Product ID " + "\t" + ": " + usb[1],
-                        Color.Black,
-                        true,
-                        true
-                    );
-                }
 
-                MyDisplay.RichLogs("Handshaking... ", Color.Black, true, false);
+                Log("OK", Color.Purple, true);
+                string[] usb = VID_PID(selectedDevice.hwid);
+                Log("Port Number\t\t: COM" + selectedDevice.comport, Color.Black, true);
+                Log("Vendor ID\t\t: " + usb[0], Color.Black, true);
+                Log("Product ID\t: " + usb[1], Color.Black, true);
+
+                Log("Handshaking... ", Color.Black, false);
                 PortOpen(selectedDevice.comport);
 
-                if (serialPort.IsOpen)
+                if (!serialPort.IsOpen)
                 {
-                    if (Main.SharedUI.UnisocWorker.CancellationPending)
-                    {
-                        e.Cancel = true;
-                        iscontinue = false;
-                        return false;
-                    }
-                    MyDisplay.RichLogs("OK", Color.Purple, true, true);
-                    MyDisplay.RichLogs("Execute command... ", Color.Black, true, false);
-                    byte[] datameta = DiagChannelPayload;
-                    PortWrite(datameta);
-                    MyDisplay.RichLogs("OK", Color.Purple, true, true);
-                }
-                else
-                {
-                    MyDisplay.RichLogs("Fail", Color.Red, true, true);
+                    Log("Fail", Color.Red, true);
                     busyState = false;
-                    iscontinue = false;
                     return false;
                 }
-                MyDisplay.RichLogs(" ", Color.Purple, true, true);
-                MyDisplay.RichLogs(" ", Color.Purple, true, true);
+
+                if (IsCancelled(e))
+                {
+                    busyState = false;
+                    return false;
+                }
+
+                Log("OK", Color.Purple, true);
+                Log("Execute command... ", Color.Black, false);
+                PortWrite(DiagChannelPayload);
+                Log("OK", Color.Purple, true);
+                Log(" ", Color.Purple, true);
                 busyState = false;
 
-                Main.SharedUI.ComboPort.Invoke(
-                    new Action(() =>
-                    {
-                        do
-                        {
-                            if (Main.SharedUI.UnisocWorker.CancellationPending)
-                            {
-                                e.Cancel = true;
-                                iscontinue = false;
-                                return;
-                            }
-                            if (string.IsNullOrEmpty(Main.SharedUI.ComboPort.Text))
-                            {
-                                break;
-                            }
-                            MyProgress.Delay(1);
-                        } while (true);
-                    })
-                );
-
-                if (Main.SharedUI.UnisocWorker.CancellationPending)
+                if (IsCancelled(e))
                 {
                     e.Cancel = true;
-                    iscontinue = false;
                     return false;
                 }
+
                 return iscontinue;
-            }
-
-            private static string ImeiToHex(string imei)
-            {
-                if (string.IsNullOrEmpty(imei))
-                {
-                    return string.Empty;
-                }
-                imei = imei.Trim();
-                if (imei.Length != 15)
-                {
-                    return string.Empty;
-                }
-                string res = imei.Substring(0, 1) + "A ";
-
-                for (int i = 1; i < imei.Length; i += 2)
-                {
-                    res += imei.Substring(i + 1, 1) + imei.Substring(i, 1) + " ";
-                }
-
-                Console.WriteLine("Imei To Hex : " + res);
-                return res;
-            }
-
-            private static string HexToImei(string hex)
-            {
-                if (string.IsNullOrEmpty(hex))
-                {
-                    return string.Empty;
-                }
-                hex = hex.Replace(" ", string.Empty).Replace("-", string.Empty);
-                if (hex.Length != 16)
-                {
-                    return string.Empty;
-                }
-                string res = hex.Substring(0, 1) + "A ";
-
-                for (int i = 0; i < hex.Length; i += 2)
-                {
-                    res += hex.Substring(i + 1, 1) + hex.Substring(i, 1) + " ";
-                }
-
-                res = res.Substring(4).Replace(" ", string.Empty);
-                Console.WriteLine("Hex To Imei : " + res);
-                return res;
-            }
-
-            private static void RestoreImei(
-                string Imei,
-                string num,
-                PhoneCommandAPI.SP_HANDLE hDiagPhone
-            )
-            {
-                MyDisplay.RichLogs(
-                    "WRITE IMEI " + num + "	: " + Imei + "... ",
-                    Color.Black,
-                    true,
-                    false
-                );
-                ushort NVID = PhoneCommandAPI.NVID_IMEI1;
-                if (num == "1")
-                {
-                    NVID = PhoneCommandAPI.NVID_IMEI1;
-                }
-                else if (num == "2")
-                {
-                    NVID = PhoneCommandAPI.NVID_IMEI2;
-                }
-                else
-                {
-                    MyDisplay.RichLogs("Error", Color.Red, true, true);
-                    return;
-                }
-                Console.WriteLine("SP_WriteImei " + "NVID : " + num + " IMEI : " + Imei);
-                int result = PhoneCommandAPI.SP_WriteImei(hDiagPhone, NVID, Imei);
-                Thread.Sleep(1000);
-                if (result == 0)
-                {
-                    MyDisplay.RichLogs("OK", Color.Purple, true, true);
-                }
-                else
-                {
-                    MyDisplay.RichLogs("FAIL, Error " + result, Color.Red, true, true);
-                }
-            }
-
-            private static int SendAT(
-                PhoneCommandAPI.SP_HANDLE hDiagPhone,
-                string command,
-                ref string response
-            )
-            {
-                string atCommand = command;
-                byte[] atCommandBytes = Encoding.ASCII.GetBytes(atCommand);
-                bool wantReply = true;
-                int replyCapacity = 1024;
-                byte[] replyStringBytes = new byte[replyCapacity];
-                uint replyStringLength = 0;
-                uint timeout = 5000;
-
-                var result = PhoneCommandAPI.SP_SendATCommand(
-                    hDiagPhone,
-                    atCommandBytes,
-                    wantReply,
-                    replyStringBytes,
-                    (uint)replyCapacity,
-                    ref replyStringLength,
-                    timeout
-                );
-                string replyString = Encoding.ASCII.GetString(
-                    replyStringBytes,
-                    0,
-                    (int)replyStringLength
-                );
-                response = Regex.Replace(replyString, "[\\r\\n]|OK", string.Empty);
-
-                return result;
             }
         }
     }

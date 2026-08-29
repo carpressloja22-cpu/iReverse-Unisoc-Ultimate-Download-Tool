@@ -1,6 +1,5 @@
 ﻿using iReverse_Unisoc_Ultimate.Utility.Connection.API;
 using System;
-using System.Threading;
 
 namespace iReverse_Unisoc_Ultimate
 {
@@ -8,38 +7,108 @@ namespace iReverse_Unisoc_Ultimate
     {
         internal static class DiagChannel
         {
+            private static readonly object SyncRoot = new object();
+
             public static PhoneCommandAPI.SP_HANDLE hDiagPhone;
             public static byte[] ChannelBuffer = new byte[1024];
 
-            public static void DiagConnect(string PortCom)
+            public static bool IsConnected
             {
-                IntPtr logUtilPtr = IntPtr.Zero;
-                hDiagPhone = PhoneCommandAPI.SP_CreatePhone(logUtilPtr);
+                get
+                {
+                    lock (SyncRoot)
+                    {
+                        return hDiagPhone.Value != IntPtr.Zero;
+                    }
+                }
+            }
 
-                PhoneCommandAPI.CHANNEL_ATTRIBUTE openArgument = new PhoneCommandAPI.CHANNEL_ATTRIBUTE();
-                openArgument.ChannelType = PhoneCommandAPI.CHANNEL_TYPE.CHANNEL_TYPE_COM;
-                openArgument.Com.dwPortNum = uint.Parse(PortCom);
-                openArgument.Com.dwBaudRate = 115200; //115200
-                Console.WriteLine(
-                    "Begin Diag Channel  From Channel : "
-                        + PhoneCommandAPI.SP_BeginPhoneTest(hDiagPhone, ref openArgument)
-                        + " USB Port COM"
-                        + PortCom
-                );
-                Thread.Sleep(500);
+            public static bool DiagConnect(string portCom, out int nativeResult)
+            {
+                nativeResult = -1;
+
+                int port;
+                if (!int.TryParse(portCom, out port) || port <= 0)
+                    return false;
+
+                lock (SyncRoot)
+                {
+                    if (hDiagPhone.Value != IntPtr.Zero)
+                        return true;
+
+                    hDiagPhone = PhoneCommandAPI.SP_CreatePhone(IntPtr.Zero);
+                    if (hDiagPhone.Value == IntPtr.Zero)
+                        return false;
+
+                    PhoneCommandAPI.CHANNEL_ATTRIBUTE openArgument = new PhoneCommandAPI.CHANNEL_ATTRIBUTE();
+                    openArgument.ChannelType = PhoneCommandAPI.CHANNEL_TYPE.CHANNEL_TYPE_COM;
+                    openArgument.Com.dwPortNum = (uint)port;
+                    openArgument.Com.dwBaudRate = 115200;
+
+                    nativeResult = PhoneCommandAPI.SP_BeginPhoneTest(
+                        hDiagPhone,
+                        ref openArgument
+                    );
+
+                    Console.WriteLine(
+                        "Begin Diag Channel: " + nativeResult + " USB Port COM" + port
+                    );
+
+                    if (nativeResult != 0)
+                    {
+                        ReleaseHandleNoThrow();
+                        return false;
+                    }
+
+                    return true;
+                }
             }
 
             public static void DiagClose()
             {
-                Thread.Sleep(500);
-                PhoneCommandAPI.SP_ReleasePhone(hDiagPhone);
-                Thread.Sleep(1000);
+                lock (SyncRoot)
+                {
+                    ReleaseHandleNoThrow();
+                }
             }
 
-            public static void WriteDiag(byte[] lpvalue)
+            private static void ReleaseHandleNoThrow()
             {
-                Thread.Sleep(15);
-                PhoneCommandAPI.SP_Write(hDiagPhone, lpvalue, (ulong)lpvalue.Length);
+                if (hDiagPhone.Value == IntPtr.Zero)
+                    return;
+
+                try
+                {
+                    PhoneCommandAPI.SP_EndPhoneTest(hDiagPhone);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("SP_EndPhoneTest: " + ex.Message);
+                }
+
+                try
+                {
+                    hDiagPhone = PhoneCommandAPI.SP_ReleasePhone(hDiagPhone);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("SP_ReleasePhone: " + ex.Message);
+                    hDiagPhone = default(PhoneCommandAPI.SP_HANDLE);
+                }
+
+                hDiagPhone = default(PhoneCommandAPI.SP_HANDLE);
+            }
+
+            public static int WriteDiag(byte[] lpvalue)
+            {
+                if (!IsConnected || lpvalue == null || lpvalue.Length == 0)
+                    return -1;
+
+                return PhoneCommandAPI.SP_Write(
+                    hDiagPhone,
+                    lpvalue,
+                    (ulong)lpvalue.Length
+                );
             }
         }
     }
