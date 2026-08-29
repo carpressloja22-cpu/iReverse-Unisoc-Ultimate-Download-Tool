@@ -1,4 +1,4 @@
-﻿using iReverse_Unisoc_Ultimate.MyUI;
+using iReverse_Unisoc_Ultimate.MyUI;
 using iReverse_Unisoc_Ultimate.UniFlash;
 using iReverse_Unisoc_Ultimate.UniFlash.Validation;
 using System;
@@ -1204,7 +1204,6 @@ namespace iReverse_Unisoc_Ultimate
                 MyProgress.ProcessBar2(0);
                 WorkerMethod = "Factory Reset";
                 UnisocWorker.RunWorkerAsync();
-                UnisocWorker.Dispose();
             }
         }
 
@@ -1218,7 +1217,6 @@ namespace iReverse_Unisoc_Ultimate
                 MyProgress.ProcessBar2(0);
                 WorkerMethod = "Power Off";
                 UnisocWorker.RunWorkerAsync();
-                UnisocWorker.Dispose();
             }
         }
 
@@ -1232,7 +1230,6 @@ namespace iReverse_Unisoc_Ultimate
                 MyProgress.ProcessBar2(0);
                 WorkerMethod = "Send ATCommand";
                 UnisocWorker.RunWorkerAsync();
-                UnisocWorker.Dispose();
                 CkDiagConnected.Checked = false;
             }
         }
@@ -1249,7 +1246,6 @@ namespace iReverse_Unisoc_Ultimate
                 MyProgress.ProcessBar2(0);
                 WorkerMethod = "Read IMEI";
                 UnisocWorker.RunWorkerAsync();
-                UnisocWorker.Dispose();
             }
         }
 
@@ -1263,7 +1259,6 @@ namespace iReverse_Unisoc_Ultimate
                 MyProgress.ProcessBar2(0);
                 WorkerMethod = "Write IMEI 1";
                 UnisocWorker.RunWorkerAsync();
-                UnisocWorker.Dispose();
             }
         }
 
@@ -1277,7 +1272,6 @@ namespace iReverse_Unisoc_Ultimate
                 MyProgress.ProcessBar2(0);
                 WorkerMethod = "Write IMEI 2";
                 UnisocWorker.RunWorkerAsync();
-                UnisocWorker.Dispose();
             }
         }
 
@@ -1291,7 +1285,6 @@ namespace iReverse_Unisoc_Ultimate
                 MyProgress.ProcessBar2(0);
                 WorkerMethod = "Enter Diag Mode";
                 UnisocWorker.RunWorkerAsync();
-                UnisocWorker.Dispose();
             }
         }
 
