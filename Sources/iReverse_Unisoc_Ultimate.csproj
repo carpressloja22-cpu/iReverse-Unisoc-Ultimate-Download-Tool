@@ -214,6 +214,7 @@
     <Compile Include="UniFlash\Worker\WorkerUnlock.cs" />
     <Compile Include="UniFlash\Worker\WorkerDownload.cs" />
     <Compile Include="UniFlash\PACExtractor.cs" />
+    <Compile Include="UniFlash\Patching\MiscDataPatcher.cs" />
     <Compile Include="UniFlash\uni.cs" />
   </ItemGroup>
   <ItemGroup>

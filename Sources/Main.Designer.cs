@@ -947,7 +947,7 @@ namespace iReverse_Unisoc_Ultimate
             this.TabPage2.Controls.Add(this.BtnPowerOff);
             this.TabPage2.Controls.Add(this.BtnSendATCommand);
             this.TabPage2.Controls.Add(this.BtnFactoryReset);
-            this.TabPage2.Controls.Add(this.GroupBox3);
+            this.TabPage2.Controls.Add(this.GroupBoxMiscDataPatch);
             this.TabPage2.Controls.Add(this.GroupBox2);
             this.TabPage2.Controls.Add(this.GroupBox1);
             this.TabPage2.Controls.Add(this.TxtATCommand);
@@ -980,19 +980,19 @@ namespace iReverse_Unisoc_Ultimate
             this.BtnRemoveAntiCrack.UseVisualStyleBackColor = false;
             this.BtnRemoveAntiCrack.Click += new System.EventHandler(this.BtnRemoveAntiCrack_Click);
             // 
-            // GroupBox3
+            // GroupBoxMiscDataPatch
             // 
-            this.GroupBox3.Controls.Add(this.BtnSaveMiscData);
-            this.GroupBox3.Controls.Add(this.BtnPatchMiscData);
-            this.GroupBox3.Controls.Add(this.BtnBrowseMiscData);
-            this.GroupBox3.Controls.Add(this.TxtMiscDataPath);
-            this.GroupBox3.Controls.Add(this.Label16);
-            this.GroupBox3.Location = new System.Drawing.Point(7, 220);
-            this.GroupBox3.Name = "GroupBox3";
-            this.GroupBox3.Size = new System.Drawing.Size(533, 85);
-            this.GroupBox3.TabIndex = 38;
-            this.GroupBox3.TabStop = false;
-            this.GroupBox3.Text = "MiscData Anti-Crack Patch";
+            this.GroupBoxMiscDataPatch.Controls.Add(this.BtnSaveMiscData);
+            this.GroupBoxMiscDataPatch.Controls.Add(this.BtnPatchMiscData);
+            this.GroupBoxMiscDataPatch.Controls.Add(this.BtnBrowseMiscData);
+            this.GroupBoxMiscDataPatch.Controls.Add(this.TxtMiscDataPath);
+            this.GroupBoxMiscDataPatch.Controls.Add(this.Label16);
+            this.GroupBoxMiscDataPatch.Location = new System.Drawing.Point(7, 220);
+            this.GroupBoxMiscDataPatch.Name = "GroupBoxMiscDataPatch";
+            this.GroupBoxMiscDataPatch.Size = new System.Drawing.Size(533, 85);
+            this.GroupBoxMiscDataPatch.TabIndex = 38;
+            this.GroupBoxMiscDataPatch.TabStop = false;
+            this.GroupBoxMiscDataPatch.Text = "MiscData Anti-Crack Patch";
             // 
             // TxtMiscDataPath
             // 
@@ -1515,7 +1515,7 @@ namespace iReverse_Unisoc_Ultimate
             this.TabPage3.ResumeLayout(false);
             this.TabPage3.PerformLayout();
             this.GroupBox4.ResumeLayout(false);
-            this.GroupBox3.ResumeLayout(false);
+            this.GroupBoxMiscDataPatch.ResumeLayout(false);
             this.TabPage2.ResumeLayout(false);
             this.TabPage2.PerformLayout();
             this.GroupBox2.ResumeLayout(false);
@@ -1617,7 +1617,7 @@ namespace iReverse_Unisoc_Ultimate
         private DataGridViewTextBoxColumn Column4;
         private DataGridViewTextBoxColumn Column5;
         private DataGridViewTextBoxColumn Column6;
-        internal GroupBox GroupBox3;
+        internal GroupBox GroupBoxMiscDataPatch;
         internal TextBox TxtMiscDataPath;
         internal Label Label16;
         internal CustomControls.iReverseControls.iReverseButton BtnBrowseMiscData;
