@@ -947,6 +947,7 @@ namespace iReverse_Unisoc_Ultimate
             this.TabPage2.Controls.Add(this.BtnPowerOff);
             this.TabPage2.Controls.Add(this.BtnSendATCommand);
             this.TabPage2.Controls.Add(this.BtnFactoryReset);
+            this.TabPage2.Controls.Add(this.GroupBox3);
             this.TabPage2.Controls.Add(this.GroupBox2);
             this.TabPage2.Controls.Add(this.GroupBox1);
             this.TabPage2.Controls.Add(this.TxtATCommand);
@@ -978,6 +979,93 @@ namespace iReverse_Unisoc_Ultimate
             this.BtnRemoveAntiCrack.TextColor = System.Drawing.Color.White;
             this.BtnRemoveAntiCrack.UseVisualStyleBackColor = false;
             this.BtnRemoveAntiCrack.Click += new System.EventHandler(this.BtnRemoveAntiCrack_Click);
+            // 
+            // GroupBox3
+            // 
+            this.GroupBox3.Controls.Add(this.BtnSaveMiscData);
+            this.GroupBox3.Controls.Add(this.BtnPatchMiscData);
+            this.GroupBox3.Controls.Add(this.BtnBrowseMiscData);
+            this.GroupBox3.Controls.Add(this.TxtMiscDataPath);
+            this.GroupBox3.Controls.Add(this.Label16);
+            this.GroupBox3.Location = new System.Drawing.Point(7, 220);
+            this.GroupBox3.Name = "GroupBox3";
+            this.GroupBox3.Size = new System.Drawing.Size(533, 85);
+            this.GroupBox3.TabIndex = 38;
+            this.GroupBox3.TabStop = false;
+            this.GroupBox3.Text = "MiscData Anti-Crack Patch";
+            // 
+            // TxtMiscDataPath
+            // 
+            this.TxtMiscDataPath.Location = new System.Drawing.Point(14, 28);
+            this.TxtMiscDataPath.Name = "TxtMiscDataPath";
+            this.TxtMiscDataPath.Size = new System.Drawing.Size(350, 20);
+            this.TxtMiscDataPath.TabIndex = 0;
+            // 
+            // Label16
+            // 
+            this.Label16.AutoSize = true;
+            this.Label16.Location = new System.Drawing.Point(11, 51);
+            this.Label16.Name = "Label16";
+            this.Label16.Size = new System.Drawing.Size(280, 13);
+            this.Label16.TabIndex = 1;
+            this.Label16.Text = "Load miscdata file -> Patch -> Save cleaned output";
+            // 
+            // BtnBrowseMiscData
+            // 
+            this.BtnBrowseMiscData.BackColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnBrowseMiscData.BackgroundColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnBrowseMiscData.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.BtnBrowseMiscData.BorderRadius = 0;
+            this.BtnBrowseMiscData.BorderSize = 0;
+            this.BtnBrowseMiscData.FlatAppearance.BorderSize = 0;
+            this.BtnBrowseMiscData.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.BtnBrowseMiscData.ForeColor = System.Drawing.Color.White;
+            this.BtnBrowseMiscData.Location = new System.Drawing.Point(374, 27);
+            this.BtnBrowseMiscData.Name = "BtnBrowseMiscData";
+            this.BtnBrowseMiscData.Size = new System.Drawing.Size(70, 23);
+            this.BtnBrowseMiscData.TabIndex = 2;
+            this.BtnBrowseMiscData.Text = "Browse";
+            this.BtnBrowseMiscData.TextColor = System.Drawing.Color.White;
+            this.BtnBrowseMiscData.UseVisualStyleBackColor = false;
+            this.BtnBrowseMiscData.Click += new System.EventHandler(this.BtnBrowseMiscData_Click);
+            // 
+            // BtnPatchMiscData
+            // 
+            this.BtnPatchMiscData.BackColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnPatchMiscData.BackgroundColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnPatchMiscData.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.BtnPatchMiscData.BorderRadius = 0;
+            this.BtnPatchMiscData.BorderSize = 0;
+            this.BtnPatchMiscData.FlatAppearance.BorderSize = 0;
+            this.BtnPatchMiscData.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.BtnPatchMiscData.ForeColor = System.Drawing.Color.White;
+            this.BtnPatchMiscData.Location = new System.Drawing.Point(134, 50);
+            this.BtnPatchMiscData.Name = "BtnPatchMiscData";
+            this.BtnPatchMiscData.Size = new System.Drawing.Size(120, 23);
+            this.BtnPatchMiscData.TabIndex = 3;
+            this.BtnPatchMiscData.Text = "Patch MiscData";
+            this.BtnPatchMiscData.TextColor = System.Drawing.Color.White;
+            this.BtnPatchMiscData.UseVisualStyleBackColor = false;
+            this.BtnPatchMiscData.Click += new System.EventHandler(this.BtnPatchMiscData_Click);
+            // 
+            // BtnSaveMiscData
+            // 
+            this.BtnSaveMiscData.BackColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnSaveMiscData.BackgroundColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnSaveMiscData.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.BtnSaveMiscData.BorderRadius = 0;
+            this.BtnSaveMiscData.BorderSize = 0;
+            this.BtnSaveMiscData.FlatAppearance.BorderSize = 0;
+            this.BtnSaveMiscData.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.BtnSaveMiscData.ForeColor = System.Drawing.Color.White;
+            this.BtnSaveMiscData.Location = new System.Drawing.Point(274, 50);
+            this.BtnSaveMiscData.Name = "BtnSaveMiscData";
+            this.BtnSaveMiscData.Size = new System.Drawing.Size(120, 23);
+            this.BtnSaveMiscData.TabIndex = 4;
+            this.BtnSaveMiscData.Text = "Save Output";
+            this.BtnSaveMiscData.TextColor = System.Drawing.Color.White;
+            this.BtnSaveMiscData.UseVisualStyleBackColor = false;
+            this.BtnSaveMiscData.Click += new System.EventHandler(this.BtnSaveMiscData_Click);
             // 
             // BtnPowerOff
             // 
@@ -1529,6 +1617,12 @@ namespace iReverse_Unisoc_Ultimate
         private DataGridViewTextBoxColumn Column4;
         private DataGridViewTextBoxColumn Column5;
         private DataGridViewTextBoxColumn Column6;
+        internal GroupBox GroupBox3;
+        internal TextBox TxtMiscDataPath;
+        internal Label Label16;
+        internal CustomControls.iReverseControls.iReverseButton BtnBrowseMiscData;
+        internal CustomControls.iReverseControls.iReverseButton BtnPatchMiscData;
+        internal CustomControls.iReverseControls.iReverseButton BtnSaveMiscData;
     }
 
 }

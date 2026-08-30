@@ -1,6 +1,7 @@
 using iReverse_Unisoc_Ultimate.MyUI;
 using iReverse_Unisoc_Ultimate.UniFlash;
 using iReverse_Unisoc_Ultimate.UniFlash.Validation;
+using iReverse_Unisoc_Ultimate.UniFlash.Patching;
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -1330,6 +1331,80 @@ namespace iReverse_Unisoc_Ultimate
                 MyProgress.ProcessBar2(0);
                 WorkerMethod = "Enter Diag Mode";
                 UnisocWorker.RunWorkerAsync();
+            }
+        }
+
+        private string MiscDataOutputPath = string.Empty;
+
+        private void BtnBrowseMiscData_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog()
+            {
+                Title = "Select MiscData File",
+                Filter = "MiscData|miscdata*|All Files|*.*",
+                RestoreDirectory = true
+            };
+            if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                TxtMiscDataPath.Text = openFileDialog.FileName;
+                MiscDataOutputPath = string.Empty;
+            }
+        }
+
+        private void BtnPatchMiscData_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(TxtMiscDataPath.Text) && File.Exists(TxtMiscDataPath.Text))
+            {
+                MyDisplay.RtbClear();
+                MyDisplay.RichLogs("MiscData Patch\t: ", Color.Black, true, false);
+                MyDisplay.RichLogs("Loading file: " + TxtMiscDataPath.Text, Color.Black, true, true);
+
+                string inputPath = TxtMiscDataPath.Text;
+                string outputPath = Path.Combine(
+                    Path.GetDirectoryName(inputPath),
+                    Path.GetFileNameWithoutExtension(inputPath) + "_patched" + Path.GetExtension(inputPath)
+                );
+
+                var result = Patching.MiscDataPatcher.Patch(inputPath, outputPath);
+                if (result.Success)
+                {
+                    MiscDataOutputPath = outputPath;
+                    MyDisplay.RichLogs(result.Message, Color.Purple, true, true);
+                    foreach (string detail in result.Details)
+                        MyDisplay.RichLogs("  - " + detail, Color.Black, true, true);
+                    MyDisplay.RichLogs("Output: " + outputPath, Color.Green, true, true);
+                }
+                else
+                {
+                    MyDisplay.RichLogs(result.Message, Color.Red, true, true);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please select a valid miscdata file first.", "MiscData Patch", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void BtnSaveMiscData_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(MiscDataOutputPath) && File.Exists(MiscDataOutputPath))
+            {
+                SaveFileDialog saveFileDialog = new SaveFileDialog()
+                {
+                    Title = "Save Patched MiscData",
+                    Filter = "MiscData|miscdata*|All Files|*.*",
+                    FileName = Path.GetFileName(MiscDataOutputPath),
+                    RestoreDirectory = true
+                };
+                if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    File.Copy(MiscDataOutputPath, saveFileDialog.FileName, true);
+                    MyDisplay.RichLogs("Saved patched file to: " + saveFileDialog.FileName, Color.Green, true, true);
+                }
+            }
+            else
+            {
+                MessageBox.Show("No patched file available. Please run Patch first.", "MiscData Patch", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
