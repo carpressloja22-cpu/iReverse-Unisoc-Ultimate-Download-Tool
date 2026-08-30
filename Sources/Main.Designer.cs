@@ -101,6 +101,12 @@ namespace iReverse_Unisoc_Ultimate
             this.BtnPowerOff = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
             this.BtnSendATCommand = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
             this.BtnFactoryReset = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
+            this.GroupBoxMiscDataPatch = new System.Windows.Forms.GroupBox();
+            this.BtnBrowseMiscData = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
+            this.BtnPatchMiscData = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
+            this.BtnSaveMiscData = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
+            this.TxtMiscDataPath = new System.Windows.Forms.TextBox();
+            this.Label16 = new System.Windows.Forms.Label();
             this.GroupBox2 = new System.Windows.Forms.GroupBox();
             this.BtnEnterDiagMode = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
             this.RdFactoryTestMode = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseRadioButton();
@@ -133,6 +139,7 @@ namespace iReverse_Unisoc_Ultimate
             this.TabPage3.SuspendLayout();
             this.GroupBox4.SuspendLayout();
             this.GroupBox3.SuspendLayout();
+            this.GroupBoxMiscDataPatch.SuspendLayout();
             this.TabPage2.SuspendLayout();
             this.GroupBox2.SuspendLayout();
             this.GroupBox1.SuspendLayout();

