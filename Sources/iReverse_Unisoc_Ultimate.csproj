@@ -216,6 +216,8 @@
     <Compile Include="UniFlash\PACExtractor.cs" />
     <Compile Include="UniFlash\Patching\MiscDataPatcher.cs" />
     <Compile Include="UniFlash\Patching\BootloaderPatcher.cs" />
+    <Compile Include="UniFlash\Patching\SuperPatcher.cs" />
+    <Compile Include="UniFlash\Patching\ProinfoPatcher.cs" />
     <Compile Include="UniFlash\uni.cs" />
   </ItemGroup>
   <ItemGroup>

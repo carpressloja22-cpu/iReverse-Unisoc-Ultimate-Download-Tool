@@ -107,6 +107,24 @@ namespace iReverse_Unisoc_Ultimate
             this.BtnSaveMiscData = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
             this.TxtMiscDataPath = new System.Windows.Forms.TextBox();
             this.Label16 = new System.Windows.Forms.Label();
+            this.GroupBoxBootloaderPatch = new System.Windows.Forms.GroupBox();
+            this.TxtBootloaderPath = new System.Windows.Forms.TextBox();
+            this.Label17 = new System.Windows.Forms.Label();
+            this.BtnBrowseBootloader = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
+            this.BtnPatchBootloader = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
+            this.BtnSaveBootloader = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
+            this.GroupBoxSuperPatch = new System.Windows.Forms.GroupBox();
+            this.TxtSuperPath = new System.Windows.Forms.TextBox();
+            this.Label18 = new System.Windows.Forms.Label();
+            this.BtnBrowseSuper = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
+            this.BtnPatchSuper = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
+            this.BtnSaveSuper = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
+            this.GroupBoxProinfoPatch = new System.Windows.Forms.GroupBox();
+            this.TxtProinfoPath = new System.Windows.Forms.TextBox();
+            this.Label19 = new System.Windows.Forms.Label();
+            this.BtnBrowseProinfo = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
+            this.BtnPatchProinfo = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
+            this.BtnSaveProinfo = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
             this.GroupBox2 = new System.Windows.Forms.GroupBox();
             this.BtnEnterDiagMode = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseButton();
             this.RdFactoryTestMode = new iReverse_Unisoc_Ultimate.CustomControls.iReverseControls.iReverseRadioButton();
@@ -140,6 +158,9 @@ namespace iReverse_Unisoc_Ultimate
             this.GroupBox4.SuspendLayout();
             this.GroupBox3.SuspendLayout();
             this.GroupBoxMiscDataPatch.SuspendLayout();
+            this.GroupBoxBootloaderPatch.SuspendLayout();
+            this.GroupBoxSuperPatch.SuspendLayout();
+            this.GroupBoxProinfoPatch.SuspendLayout();
             this.TabPage2.SuspendLayout();
             this.GroupBox2.SuspendLayout();
             this.GroupBox1.SuspendLayout();
@@ -954,6 +975,9 @@ namespace iReverse_Unisoc_Ultimate
             this.TabPage2.Controls.Add(this.BtnPowerOff);
             this.TabPage2.Controls.Add(this.BtnSendATCommand);
             this.TabPage2.Controls.Add(this.BtnFactoryReset);
+            this.TabPage2.Controls.Add(this.GroupBoxSuperPatch);
+            this.TabPage2.Controls.Add(this.GroupBoxProinfoPatch);
+            this.TabPage2.Controls.Add(this.GroupBoxBootloaderPatch);
             this.TabPage2.Controls.Add(this.GroupBoxMiscDataPatch);
             this.TabPage2.Controls.Add(this.GroupBox2);
             this.TabPage2.Controls.Add(this.GroupBox1);
@@ -1073,6 +1097,180 @@ namespace iReverse_Unisoc_Ultimate
             this.BtnSaveMiscData.TextColor = System.Drawing.Color.White;
             this.BtnSaveMiscData.UseVisualStyleBackColor = false;
             this.BtnSaveMiscData.Click += new System.EventHandler(this.BtnSaveMiscData_Click);
+            // 
+            // GroupBoxSuperPatch
+            // 
+            this.GroupBoxSuperPatch.Controls.Add(this.BtnSaveSuper);
+            this.GroupBoxSuperPatch.Controls.Add(this.BtnPatchSuper);
+            this.GroupBoxSuperPatch.Controls.Add(this.BtnBrowseSuper);
+            this.GroupBoxSuperPatch.Controls.Add(this.TxtSuperPath);
+            this.GroupBoxSuperPatch.Controls.Add(this.Label18);
+            this.GroupBoxSuperPatch.Location = new System.Drawing.Point(7, 410);
+            this.GroupBoxSuperPatch.Name = "GroupBoxSuperPatch";
+            this.GroupBoxSuperPatch.Size = new System.Drawing.Size(533, 85);
+            this.GroupBoxSuperPatch.TabIndex = 40;
+            this.GroupBoxSuperPatch.TabStop = false;
+            this.GroupBoxSuperPatch.Text = "Super Partition Security Plugin Patch";
+            // 
+            // TxtSuperPath
+            // 
+            this.TxtSuperPath.Location = new System.Drawing.Point(14, 28);
+            this.TxtSuperPath.Name = "TxtSuperPath";
+            this.TxtSuperPath.Size = new System.Drawing.Size(350, 20);
+            this.TxtSuperPath.TabIndex = 0;
+            // 
+            // Label18
+            // 
+            this.Label18.AutoSize = true;
+            this.Label18.Location = new System.Drawing.Point(11, 51);
+            this.Label18.Name = "Label18";
+            this.Label18.Size = new System.Drawing.Size(280, 13);
+            this.Label18.TabIndex = 1;
+            this.Label18.Text = "Load super.img -> Patch -> Save cleaned output";
+            // 
+            // BtnBrowseSuper
+            // 
+            this.BtnBrowseSuper.BackColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnBrowseSuper.BackgroundColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnBrowseSuper.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.BtnBrowseSuper.BorderRadius = 0;
+            this.BtnBrowseSuper.BorderSize = 0;
+            this.BtnBrowseSuper.FlatAppearance.BorderSize = 0;
+            this.BtnBrowseSuper.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.BtnBrowseSuper.ForeColor = System.Drawing.Color.White;
+            this.BtnBrowseSuper.Location = new System.Drawing.Point(374, 27);
+            this.BtnBrowseSuper.Name = "BtnBrowseSuper";
+            this.BtnBrowseSuper.Size = new System.Drawing.Size(70, 23);
+            this.BtnBrowseSuper.TabIndex = 2;
+            this.BtnBrowseSuper.Text = "Browse";
+            this.BtnBrowseSuper.TextColor = System.Drawing.Color.White;
+            this.BtnBrowseSuper.UseVisualStyleBackColor = false;
+            this.BtnBrowseSuper.Click += new System.EventHandler(this.BtnBrowseSuper_Click);
+            // 
+            // BtnPatchSuper
+            // 
+            this.BtnPatchSuper.BackColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnPatchSuper.BackgroundColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnPatchSuper.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.BtnPatchSuper.BorderRadius = 0;
+            this.BtnPatchSuper.BorderSize = 0;
+            this.BtnPatchSuper.FlatAppearance.BorderSize = 0;
+            this.BtnPatchSuper.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.BtnPatchSuper.ForeColor = System.Drawing.Color.White;
+            this.BtnPatchSuper.Location = new System.Drawing.Point(134, 50);
+            this.BtnPatchSuper.Name = "BtnPatchSuper";
+            this.BtnPatchSuper.Size = new System.Drawing.Size(120, 23);
+            this.BtnPatchSuper.TabIndex = 3;
+            this.BtnPatchSuper.Text = "Patch Super";
+            this.BtnPatchSuper.TextColor = System.Drawing.Color.White;
+            this.BtnPatchSuper.UseVisualStyleBackColor = false;
+            this.BtnPatchSuper.Click += new System.EventHandler(this.BtnPatchSuper_Click);
+            // 
+            // BtnSaveSuper
+            // 
+            this.BtnSaveSuper.BackColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnSaveSuper.BackgroundColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnSaveSuper.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.BtnSaveSuper.BorderRadius = 0;
+            this.BtnSaveSuper.BorderSize = 0;
+            this.BtnSaveSuper.FlatAppearance.BorderSize = 0;
+            this.BtnSaveSuper.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.BtnSaveSuper.ForeColor = System.Drawing.Color.White;
+            this.BtnSaveSuper.Location = new System.Drawing.Point(274, 50);
+            this.BtnSaveSuper.Name = "BtnSaveSuper";
+            this.BtnSaveSuper.Size = new System.Drawing.Size(120, 23);
+            this.BtnSaveSuper.TabIndex = 4;
+            this.BtnSaveSuper.Text = "Save Output";
+            this.BtnSaveSuper.TextColor = System.Drawing.Color.White;
+            this.BtnSaveSuper.UseVisualStyleBackColor = false;
+            this.BtnSaveSuper.Click += new System.EventHandler(this.BtnSaveSuper_Click);
+            // 
+            // GroupBoxProinfoPatch
+            // 
+            this.GroupBoxProinfoPatch.Controls.Add(this.BtnSaveProinfo);
+            this.GroupBoxProinfoPatch.Controls.Add(this.BtnPatchProinfo);
+            this.GroupBoxProinfoPatch.Controls.Add(this.BtnBrowseProinfo);
+            this.GroupBoxProinfoPatch.Controls.Add(this.TxtProinfoPath);
+            this.GroupBoxProinfoPatch.Controls.Add(this.Label19);
+            this.GroupBoxProinfoPatch.Location = new System.Drawing.Point(7, 505);
+            this.GroupBoxProinfoPatch.Name = "GroupBoxProinfoPatch";
+            this.GroupBoxProinfoPatch.Size = new System.Drawing.Size(533, 85);
+            this.GroupBoxProinfoPatch.TabIndex = 41;
+            this.GroupBoxProinfoPatch.TabStop = false;
+            this.GroupBoxProinfoPatch.Text = "Proinfo Partition Security Patch";
+            // 
+            // TxtProinfoPath
+            // 
+            this.TxtProinfoPath.Location = new System.Drawing.Point(14, 28);
+            this.TxtProinfoPath.Name = "TxtProinfoPath";
+            this.TxtProinfoPath.Size = new System.Drawing.Size(350, 20);
+            this.TxtProinfoPath.TabIndex = 0;
+            // 
+            // Label19
+            // 
+            this.Label19.AutoSize = true;
+            this.Label19.Location = new System.Drawing.Point(11, 51);
+            this.Label19.Name = "Label19";
+            this.Label19.Size = new System.Drawing.Size(280, 13);
+            this.Label19.TabIndex = 1;
+            this.Label19.Text = "Load proinfo.bin -> Patch -> Save cleaned output";
+            // 
+            // BtnBrowseProinfo
+            // 
+            this.BtnBrowseProinfo.BackColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnBrowseProinfo.BackgroundColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnBrowseProinfo.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.BtnBrowseProinfo.BorderRadius = 0;
+            this.BtnBrowseProinfo.BorderSize = 0;
+            this.BtnBrowseProinfo.FlatAppearance.BorderSize = 0;
+            this.BtnBrowseProinfo.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.BtnBrowseProinfo.ForeColor = System.Drawing.Color.White;
+            this.BtnBrowseProinfo.Location = new System.Drawing.Point(374, 27);
+            this.BtnBrowseProinfo.Name = "BtnBrowseProinfo";
+            this.BtnBrowseProinfo.Size = new System.Drawing.Size(70, 23);
+            this.BtnBrowseProinfo.TabIndex = 2;
+            this.BtnBrowseProinfo.Text = "Browse";
+            this.BtnBrowseProinfo.TextColor = System.Drawing.Color.White;
+            this.BtnBrowseProinfo.UseVisualStyleBackColor = false;
+            this.BtnBrowseProinfo.Click += new System.EventHandler(this.BtnBrowseProinfo_Click);
+            // 
+            // BtnPatchProinfo
+            // 
+            this.BtnPatchProinfo.BackColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnPatchProinfo.BackgroundColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnPatchProinfo.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.BtnPatchProinfo.BorderRadius = 0;
+            this.BtnPatchProinfo.BorderSize = 0;
+            this.BtnPatchProinfo.FlatAppearance.BorderSize = 0;
+            this.BtnPatchProinfo.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.BtnPatchProinfo.ForeColor = System.Drawing.Color.White;
+            this.BtnPatchProinfo.Location = new System.Drawing.Point(134, 50);
+            this.BtnPatchProinfo.Name = "BtnPatchProinfo";
+            this.BtnPatchProinfo.Size = new System.Drawing.Size(120, 23);
+            this.BtnPatchProinfo.TabIndex = 3;
+            this.BtnPatchProinfo.Text = "Patch Proinfo";
+            this.BtnPatchProinfo.TextColor = System.Drawing.Color.White;
+            this.BtnPatchProinfo.UseVisualStyleBackColor = false;
+            this.BtnPatchProinfo.Click += new System.EventHandler(this.BtnPatchProinfo_Click);
+            // 
+            // BtnSaveProinfo
+            // 
+            this.BtnSaveProinfo.BackColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnSaveProinfo.BackgroundColor = System.Drawing.Color.MediumSlateBlue;
+            this.BtnSaveProinfo.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.BtnSaveProinfo.BorderRadius = 0;
+            this.BtnSaveProinfo.BorderSize = 0;
+            this.BtnSaveProinfo.FlatAppearance.BorderSize = 0;
+            this.BtnSaveProinfo.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.BtnSaveProinfo.ForeColor = System.Drawing.Color.White;
+            this.BtnSaveProinfo.Location = new System.Drawing.Point(274, 50);
+            this.BtnSaveProinfo.Name = "BtnSaveProinfo";
+            this.BtnSaveProinfo.Size = new System.Drawing.Size(120, 23);
+            this.BtnSaveProinfo.TabIndex = 4;
+            this.BtnSaveProinfo.Text = "Save Output";
+            this.BtnSaveProinfo.TextColor = System.Drawing.Color.White;
+            this.BtnSaveProinfo.UseVisualStyleBackColor = false;
+            this.BtnSaveProinfo.Click += new System.EventHandler(this.BtnSaveProinfo_Click);
             // 
             // BtnPowerOff
             // 
@@ -1523,6 +1721,9 @@ namespace iReverse_Unisoc_Ultimate
             this.TabPage3.PerformLayout();
             this.GroupBox4.ResumeLayout(false);
             this.GroupBoxMiscDataPatch.ResumeLayout(false);
+            this.GroupBoxBootloaderPatch.ResumeLayout(false);
+            this.GroupBoxSuperPatch.ResumeLayout(false);
+            this.GroupBoxProinfoPatch.ResumeLayout(false);
             this.TabPage2.ResumeLayout(false);
             this.TabPage2.PerformLayout();
             this.GroupBox2.ResumeLayout(false);
@@ -1630,6 +1831,24 @@ namespace iReverse_Unisoc_Ultimate
         internal CustomControls.iReverseControls.iReverseButton BtnBrowseMiscData;
         internal CustomControls.iReverseControls.iReverseButton BtnPatchMiscData;
         internal CustomControls.iReverseControls.iReverseButton BtnSaveMiscData;
+        internal GroupBox GroupBoxBootloaderPatch;
+        internal TextBox TxtBootloaderPath;
+        internal Label Label17;
+        internal CustomControls.iReverseControls.iReverseButton BtnBrowseBootloader;
+        internal CustomControls.iReverseControls.iReverseButton BtnPatchBootloader;
+        internal CustomControls.iReverseControls.iReverseButton BtnSaveBootloader;
+        internal GroupBox GroupBoxSuperPatch;
+        internal TextBox TxtSuperPath;
+        internal Label Label18;
+        internal CustomControls.iReverseControls.iReverseButton BtnBrowseSuper;
+        internal CustomControls.iReverseControls.iReverseButton BtnPatchSuper;
+        internal CustomControls.iReverseControls.iReverseButton BtnSaveSuper;
+        internal GroupBox GroupBoxProinfoPatch;
+        internal TextBox TxtProinfoPath;
+        internal Label Label19;
+        internal CustomControls.iReverseControls.iReverseButton BtnBrowseProinfo;
+        internal CustomControls.iReverseControls.iReverseButton BtnPatchProinfo;
+        internal CustomControls.iReverseControls.iReverseButton BtnSaveProinfo;
     }
 
 }

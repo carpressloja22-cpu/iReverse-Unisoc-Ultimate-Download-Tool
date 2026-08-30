@@ -6,10 +6,8 @@ using System.Text;
 
 namespace iReverse_Unisoc_Ultimate.UniFlash.Patching
 {
-    internal class MiscDataPatcher
+    internal class ProinfoPatcher
     {
-        private const int SectorSize = 512;
-
         public class PatchResult
         {
             public bool Success { get; set; }
@@ -36,55 +34,30 @@ namespace iReverse_Unisoc_Ultimate.UniFlash.Patching
                 int originalLength = data.Length;
                 var details = new List<string>();
 
-                // ── Pattern A: String-based anti-crack markers ─────────────────
-                string[] antiCrackStrings = new string[]
+                // ── Pattern A: MDM / Security flags in proinfo ──────────────
+                string[] mdmFlags = new string[]
                 {
+                    "MDM_ENABLED",
+                    "MDM_LOCKED",
+                    "SECURITY_LOCK",
+                    "SECURITY_LOCKED",
+                    "ANTI_CRACK",
                     "ANTICRACK",
                     "TRIGGER_P7",
                     "TRIGGERP7",
-                    "ANTI_CRACK",
-                    "ANTICRACK",
-                    "SECURITY_LOCK",
-                    "SECURITYLOCK",
                     "P7_LOCK",
-                    "P7LOCK",
-                    "LOCKSTATE",
-                    "GETLOCKSTATE",
-                    "SET_SECURITY_FLAG",
                     "SECURELOCK",
-                    "SPCLSIMLOCK",
-                    "SPFRPRESET",
-                    "CLRFRP",
-                    "CLRANTICRACK",
-                    "SPTEST",
-                    "SPFACTORY",
-                    "ATS_LOCK",
-                    "ATSLOCK",
-                    "PHASE_CHECK",
-                    "PHASECHECK",
-                    "TRANS",
-                    "ITEL",
-                    "INFINIX",
-                    "TECNO",
-                    "A669L",
-                    "SQ375",
-                    "UGO",
-                    "OP",
-                    "C_TYPE",
-                    "SecurityPlugin",
+                    "SECURE_LOCK",
+                    "DEVICE_LOCKED",
+                    "DEVICE_LOCK",
+                    "FLASH_LOCK",
+                    "FLASH_LOCKED",
+                    "BOOT_LOCK",
+                    "BOOT_LOCKED",
+                    "SECURITY_PLUGIN",
                     "SECURITYPLUGIN",
-                    "security_plugin",
-                    "securityplugin",
-                    "DeviceAdmin",
                     "DEVICE_ADMIN",
-                    "device_admin",
-                    "DeviceAdminReceiver",
-                    "BIND_DEVICE_ADMIN",
-                    "MDM",
-                    "mdm",
-                    "MobileDeviceManagement",
-                    "device_owner",
-                    "profile_owner",
+                    "DEVICEADMIN",
                     "TRANS_MDM",
                     "TRANS_SECURITY",
                     "ITEL_MDM",
@@ -92,38 +65,41 @@ namespace iReverse_Unisoc_Ultimate.UniFlash.Patching
                     "TECNO_MDM",
                     "HIOS_SECURITY",
                     "XOS_SECURITY",
-                    "com.transsion.securityplugin",
-                    "com.transsion.security",
-                    "com.transsion.mdm",
-                    "com.itel.security",
-                    "com.infinix.security",
-                    "com.tecno.security"
+                    "OS_LOCK",
+                    "OS_LOCKED",
+                    "SYS_LOCK",
+                    "SYS_LOCKED",
+                    "PROINFO_LOCK",
+                    "PROINFO_LOCKED",
+                    "NVM_LOCK",
+                    "NVM_LOCKED"
                 };
 
-                int stringsRemoved = 0;
-                foreach (string search in antiCrackStrings)
+                int flagsRemoved = 0;
+                foreach (string flag in mdmFlags)
                 {
-                    byte[] searchBytes = Encoding.ASCII.GetBytes(search);
-                    int pos = FindPattern(data, searchBytes);
+                    byte[] flagBytes = Encoding.ASCII.GetBytes(flag);
+                    int pos = FindPattern(data, flagBytes);
                     if (pos >= 0)
                     {
-                        int clearLen = searchBytes.Length;
+                        int clearLen = flagBytes.Length;
                         for (int i = 0; i < clearLen; i++)
                             data[pos + i] = 0x00;
-                        stringsRemoved++;
-                        details.Add("Removed string: " + search + " at 0x" + pos.ToString("X"));
+                        flagsRemoved++;
+                        details.Add("Removed flag: " + flag + " at 0x" + pos.ToString("X"));
                     }
                 }
 
-                // ── Pattern B: NV ID patterns (ushort values in little-endian) ─
-                ushort[] antiCrackNvIds = new ushort[]
+                // ── Pattern B: Security NV IDs in proinfo ───────────────────
+                ushort[] securityNvIds = new ushort[]
                 {
                     0x22F, 0x230, 0x4D2, 0x1F3, 0x7E5,
-                    0x1A3, 0x1A4, 0x1F0, 0x1F1, 0x1F2, 0x1F4, 0x7E4
+                    0x1A3, 0x1A4, 0x1F0, 0x1F1, 0x1F2, 0x1F4, 0x7E4,
+                    0x5, 0x179, 0x17A, 0x17B, 0x17C, 0x17D
                 };
 
                 int nvIdsRemoved = 0;
-                foreach (ushort nvId in antiCrackNvIds)
+                foreach (ushort nvId in securityNvIds)
                 {
                     byte[] nvIdBytes = BitConverter.GetBytes(nvId);
                     if (!BitConverter.IsLittleEndian)
@@ -139,8 +115,8 @@ namespace iReverse_Unisoc_Ultimate.UniFlash.Patching
                     }
                 }
 
-                // ── Pattern C: DIAG command bytes (0x7B NV-write, 0x89 OEM) ───
-                int diagPacketsRemoved = 0;
+                // ── Pattern C: DIAG command bytes ───────────────────────────
+                int diagRemoved = 0;
                 byte[] diagNvWrite = new byte[] { 0x7B };
                 byte[] diagOem = new byte[] { 0x89 };
 
@@ -150,7 +126,7 @@ namespace iReverse_Unisoc_Ultimate.UniFlash.Patching
                     int clearLen = Math.Min(256, data.Length - pos7B);
                     for (int i = 0; i < clearLen; i++)
                         data[pos7B + i] = 0x00;
-                    diagPacketsRemoved++;
+                    diagRemoved++;
                     details.Add("Zeroed DIAG NV-write packet at 0x" + pos7B.ToString("X"));
                 }
 
@@ -160,19 +136,25 @@ namespace iReverse_Unisoc_Ultimate.UniFlash.Patching
                     int clearLen = Math.Min(256, data.Length - pos89);
                     for (int i = 0; i < clearLen; i++)
                         data[pos89 + i] = 0x00;
-                    diagPacketsRemoved++;
+                    diagRemoved++;
                     details.Add("Zeroed DIAG OEM packet at 0x" + pos89.ToString("X"));
                 }
 
-                // ── Pattern D: Known ATS / Transsion lock sector markers ────────
+                // ── Pattern D: ATS / Transsion lock sector markers ──────────
+                int atsRemoved = 0;
                 byte[] atsMarker = Encoding.ASCII.GetBytes("ATS");
                 byte[] transsionMarker = Encoding.ASCII.GetBytes("TRANS");
+                byte[] itelMarker = Encoding.ASCII.GetBytes("ITEL");
+                byte[] infinixMarker = Encoding.ASCII.GetBytes("INFINIX");
+                byte[] tecnoMarker = Encoding.ASCII.GetBytes("TECNO");
+
                 int atsPos = FindPattern(data, atsMarker);
                 if (atsPos >= 0)
                 {
                     int clearLen = Math.Min(64, data.Length - atsPos);
                     for (int i = 0; i < clearLen; i++)
                         data[atsPos + i] = 0x00;
+                    atsRemoved++;
                     details.Add("Zeroed ATS marker at 0x" + atsPos.ToString("X"));
                 }
 
@@ -182,20 +164,41 @@ namespace iReverse_Unisoc_Ultimate.UniFlash.Patching
                     int clearLen = Math.Min(64, data.Length - transPos);
                     for (int i = 0; i < clearLen; i++)
                         data[transPos + i] = 0x00;
+                    atsRemoved++;
                     details.Add("Zeroed TRANS marker at 0x" + transPos.ToString("X"));
                 }
 
-                // ── Pattern E: Align to sector boundary, zero trailing odd bytes ─
-                int paddedLength = ((data.Length + SectorSize - 1) / SectorSize) * SectorSize;
-                if (paddedLength > data.Length)
+                int itelPos = FindPattern(data, itelMarker);
+                if (itelPos >= 0)
                 {
-                    Array.Resize(ref data, paddedLength);
-                    for (int i = originalLength; i < paddedLength; i++)
-                        data[i] = 0xFF;
-                    details.Add("Padded to sector boundary: " + (paddedLength - originalLength) + " bytes");
+                    int clearLen = Math.Min(64, data.Length - itelPos);
+                    for (int i = 0; i < clearLen; i++)
+                        data[itelPos + i] = 0x00;
+                    atsRemoved++;
+                    details.Add("Zeroed ITEL marker at 0x" + itelPos.ToString("X"));
                 }
 
-                // ── Write output ──────────────────────────────────────────────
+                int infinixPos = FindPattern(data, infinixMarker);
+                if (infinixPos >= 0)
+                {
+                    int clearLen = Math.Min(64, data.Length - infinixPos);
+                    for (int i = 0; i < clearLen; i++)
+                        data[infinixPos + i] = 0x00;
+                    atsRemoved++;
+                    details.Add("Zeroed INFINIX marker at 0x" + infinixPos.ToString("X"));
+                }
+
+                int tecnoPos = FindPattern(data, tecnoMarker);
+                if (tecnoPos >= 0)
+                {
+                    int clearLen = Math.Min(64, data.Length - tecnoPos);
+                    for (int i = 0; i < clearLen; i++)
+                        data[tecnoPos + i] = 0x00;
+                    atsRemoved++;
+                    details.Add("Zeroed TECNO marker at 0x" + tecnoPos.ToString("X"));
+                }
+
+                // ── Write output ─────────────────────────────────────────────
                 string outDir = Path.GetDirectoryName(outputPath);
                 if (!string.IsNullOrEmpty(outDir) && !Directory.Exists(outDir))
                     Directory.CreateDirectory(outDir);
@@ -203,10 +206,10 @@ namespace iReverse_Unisoc_Ultimate.UniFlash.Patching
                 File.WriteAllBytes(outputPath, data);
 
                 result.Success = true;
-                result.PatternsRemoved = stringsRemoved + nvIdsRemoved + diagPacketsRemoved + (atsPos >= 0 ? 1 : 0) + (transPos >= 0 ? 1 : 0);
+                result.PatternsRemoved = flagsRemoved + nvIdsRemoved + diagRemoved + atsRemoved;
                 result.BytesModified = Math.Abs(data.Length - originalLength);
                 result.Details = details;
-                result.Message = "Patch applied. " + result.PatternsRemoved + " patterns removed/modified.";
+                result.Message = "Proinfo patch applied. " + result.PatternsRemoved + " patterns removed/modified.";
             }
             catch (Exception ex)
             {

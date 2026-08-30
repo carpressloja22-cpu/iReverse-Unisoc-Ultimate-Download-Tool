@@ -1408,6 +1408,231 @@ namespace iReverse_Unisoc_Ultimate
             }
         }
 
+        private string BootloaderOutputPath = string.Empty;
+
+        private void BtnBrowseBootloader_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog()
+            {
+                Title = "Select Bootloader File",
+                Filter = "Bootloader|bootloader*;ml_*;uboot*|All Files|*.*",
+                RestoreDirectory = true
+            };
+            if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                TxtBootloaderPath.Text = openFileDialog.FileName;
+                BootloaderOutputPath = string.Empty;
+            }
+        }
+
+        private void BtnPatchBootloader_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(TxtBootloaderPath.Text) && File.Exists(TxtBootloaderPath.Text))
+            {
+                MyDisplay.RtbClear();
+                MyDisplay.RichLogs("Bootloader Patch\t: ", Color.Black, true, false);
+                MyDisplay.RichLogs("Loading file: " + TxtBootloaderPath.Text, Color.Black, true, true);
+                MyDisplay.RichLogs("IMPORTANT: Apply this patch to BOTH uboot-a AND uboot-b partitions!", Color.Orange, true, true);
+
+                string inputPath = TxtBootloaderPath.Text;
+                string outputPath = Path.Combine(
+                    Path.GetDirectoryName(inputPath),
+                    Path.GetFileNameWithoutExtension(inputPath) + "_patched" + Path.GetExtension(inputPath)
+                );
+
+                var result = Patching.BootloaderPatcher.Patch(inputPath, outputPath);
+                if (result.Success)
+                {
+                    BootloaderOutputPath = outputPath;
+                    MyDisplay.RichLogs(result.Message, Color.Purple, true, true);
+                    foreach (string detail in result.Details)
+                        MyDisplay.RichLogs("  - " + detail, Color.Black, true, true);
+                    MyDisplay.RichLogs("Output: " + outputPath, Color.Green, true, true);
+                }
+                else
+                {
+                    MyDisplay.RichLogs(result.Message, Color.Red, true, true);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please select a valid bootloader file first.", "Bootloader Patch", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void BtnSaveBootloader_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(BootloaderOutputPath) && File.Exists(BootloaderOutputPath))
+            {
+                SaveFileDialog saveFileDialog = new SaveFileDialog()
+                {
+                    Title = "Save Patched Bootloader",
+                    Filter = "Bootloader|bootloader*;ml_*;uboot*|All Files|*.*",
+                    FileName = Path.GetFileName(BootloaderOutputPath),
+                    RestoreDirectory = true
+                };
+                if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    File.Copy(BootloaderOutputPath, saveFileDialog.FileName, true);
+                    MyDisplay.RichLogs("Saved patched file to: " + saveFileDialog.FileName, Color.Green, true, true);
+                }
+            }
+            else
+            {
+                MessageBox.Show("No patched file available. Please run Patch first.", "Bootloader Patch", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private string SuperOutputPath = string.Empty;
+
+        private void BtnBrowseSuper_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog()
+            {
+                Title = "Select Super Partition File",
+                Filter = "Super Partition|super.img*|All Files|*.*",
+                RestoreDirectory = true
+            };
+            if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                TxtSuperPath.Text = openFileDialog.FileName;
+                SuperOutputPath = string.Empty;
+            }
+        }
+
+        private void BtnPatchSuper_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(TxtSuperPath.Text) && File.Exists(TxtSuperPath.Text))
+            {
+                MyDisplay.RtbClear();
+                MyDisplay.RichLogs("Super Partition Patch\t: ", Color.Black, true, false);
+                MyDisplay.RichLogs("Loading file: " + TxtSuperPath.Text, Color.Black, true, true);
+                MyDisplay.RichLogs("This removes SecurityPlugin/MDM packages from super.img", Color.Orange, true, true);
+
+                string inputPath = TxtSuperPath.Text;
+                string outputPath = Path.Combine(
+                    Path.GetDirectoryName(inputPath),
+                    Path.GetFileNameWithoutExtension(inputPath) + "_patched" + Path.GetExtension(inputPath)
+                );
+
+                var result = Patching.SuperPatcher.Patch(inputPath, outputPath);
+                if (result.Success)
+                {
+                    SuperOutputPath = outputPath;
+                    MyDisplay.RichLogs(result.Message, Color.Purple, true, true);
+                    foreach (string detail in result.Details)
+                        MyDisplay.RichLogs("  - " + detail, Color.Black, true, true);
+                    MyDisplay.RichLogs("Output: " + outputPath, Color.Green, true, true);
+                }
+                else
+                {
+                    MyDisplay.RichLogs(result.Message, Color.Red, true, true);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please select a valid super.img file first.", "Super Partition Patch", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void BtnSaveSuper_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(SuperOutputPath) && File.Exists(SuperOutputPath))
+            {
+                SaveFileDialog saveFileDialog = new SaveFileDialog()
+                {
+                    Title = "Save Patched Super",
+                    Filter = "Super Partition|super.img*|All Files|*.*",
+                    FileName = Path.GetFileName(SuperOutputPath),
+                    RestoreDirectory = true
+                };
+                if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    File.Copy(SuperOutputPath, saveFileDialog.FileName, true);
+                    MyDisplay.RichLogs("Saved patched file to: " + saveFileDialog.FileName, Color.Green, true, true);
+                }
+            }
+            else
+            {
+                MessageBox.Show("No patched file available. Please run Patch first.", "Super Partition Patch", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private string ProinfoOutputPath = string.Empty;
+
+        private void BtnBrowseProinfo_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog()
+            {
+                Title = "Select Proinfo File",
+                Filter = "Proinfo|proinfo*;pro_info*|All Files|*.*",
+                RestoreDirectory = true
+            };
+            if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                TxtProinfoPath.Text = openFileDialog.FileName;
+                ProinfoOutputPath = string.Empty;
+            }
+        }
+
+        private void BtnPatchProinfo_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(TxtProinfoPath.Text) && File.Exists(TxtProinfoPath.Text))
+            {
+                MyDisplay.RtbClear();
+                MyDisplay.RichLogs("Proinfo Partition Patch\t: ", Color.Black, true, false);
+                MyDisplay.RichLogs("Loading file: " + TxtProinfoPath.Text, Color.Black, true, true);
+                MyDisplay.RichLogs("This removes security/MDM flags from proinfo.bin", Color.Orange, true, true);
+
+                string inputPath = TxtProinfoPath.Text;
+                string outputPath = Path.Combine(
+                    Path.GetDirectoryName(inputPath),
+                    Path.GetFileNameWithoutExtension(inputPath) + "_patched" + Path.GetExtension(inputPath)
+                );
+
+                var result = Patching.ProinfoPatcher.Patch(inputPath, outputPath);
+                if (result.Success)
+                {
+                    ProinfoOutputPath = outputPath;
+                    MyDisplay.RichLogs(result.Message, Color.Purple, true, true);
+                    foreach (string detail in result.Details)
+                        MyDisplay.RichLogs("  - " + detail, Color.Black, true, true);
+                    MyDisplay.RichLogs("Output: " + outputPath, Color.Green, true, true);
+                }
+                else
+                {
+                    MyDisplay.RichLogs(result.Message, Color.Red, true, true);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please select a valid proinfo.bin file first.", "Proinfo Partition Patch", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void BtnSaveProinfo_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(ProinfoOutputPath) && File.Exists(ProinfoOutputPath))
+            {
+                SaveFileDialog saveFileDialog = new SaveFileDialog()
+                {
+                    Title = "Save Patched Proinfo",
+                    Filter = "Proinfo|proinfo*;pro_info*|All Files|*.*",
+                    FileName = Path.GetFileName(ProinfoOutputPath),
+                    RestoreDirectory = true
+                };
+                if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    File.Copy(ProinfoOutputPath, saveFileDialog.FileName, true);
+                    MyDisplay.RichLogs("Saved patched file to: " + saveFileDialog.FileName, Color.Green, true, true);
+                }
+            }
+            else
+            {
+                MessageBox.Show("No patched file available. Please run Patch first.", "Proinfo Partition Patch", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
         #endregion
     }
 }
