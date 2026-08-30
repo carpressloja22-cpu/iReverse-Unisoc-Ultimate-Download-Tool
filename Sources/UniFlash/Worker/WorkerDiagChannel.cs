@@ -363,16 +363,23 @@ namespace iReverse_Unisoc_Ultimate
                 // ── Method C: OEM DIAG phase-clear packets ────────────────────
                 bool methodCSuccess = false;
                 Log("2C. Trying OEM DIAG phase-clear packets... ", Color.Black, false);
-                byte[] phaseClrPacket = DiagService.BuildSprdOemPacket(0x89, new byte[] { 0x03, 0x00, 0x00, 0x00 });
-                byte[] phaseClrAlt = DiagService.BuildSprdOemPacket(0x89, new byte[] { 0x06, 0x00, 0x00, 0x00 });
-                byte[] reply;
-                DiagResult rPhase = DiagService.SendRawDiagPacket(phaseClrPacket, out reply);
-                Log("   OEM 0x89/0x03 => " + (rPhase.Success ? "OK" : "FAIL"), Color.Black, true);
-                if (rPhase.Success) methodCSuccess = true;
+                try
+                {
+                    byte[] phaseClrPacket = DiagService.BuildSprdOemPacket(0x89, new byte[] { 0x03, 0x00, 0x00, 0x00 });
+                    byte[] phaseClrAlt = DiagService.BuildSprdOemPacket(0x89, new byte[] { 0x06, 0x00, 0x00, 0x00 });
+                    byte[] reply;
+                    DiagResult rPhase = DiagService.SendRawDiagPacket(phaseClrPacket, out reply);
+                    Log("   OEM 0x89/0x03 => " + (rPhase.Success ? "OK" : "FAIL: " + rPhase.Message), Color.Black, true);
+                    if (rPhase.Success) methodCSuccess = true;
 
-                DiagResult rPhaseAlt = DiagService.SendRawDiagPacket(phaseClrAlt, out reply);
-                Log("   OEM 0x89/0x06 => " + (rPhaseAlt.Success ? "OK" : "FAIL"), Color.Black, true);
-                if (rPhaseAlt.Success) methodCSuccess = true;
+                    DiagResult rPhaseAlt = DiagService.SendRawDiagPacket(phaseClrAlt, out reply);
+                    Log("   OEM 0x89/0x06 => " + (rPhaseAlt.Success ? "OK" : "FAIL: " + rPhaseAlt.Message), Color.Black, true);
+                    if (rPhaseAlt.Success) methodCSuccess = true;
+                }
+                catch (Exception ex)
+                {
+                    Log("   OEM DIAG error: " + ex.Message, Color.Red, true);
+                }
                 Log("Method C: " + (methodCSuccess ? "Partial/Full success" : "No response"), Color.Purple, true);
                 MyProgress.ProcessBar1(65);
 
@@ -419,13 +426,23 @@ namespace iReverse_Unisoc_Ultimate
                 if (anySuccess)
                 {
                     Log("Anti-Crack / Trigger P7 removal attempted with multiple methods.", Color.Purple, true);
-                    Log("If lock persists, the protection may be in bootloader/miscdata partition.", Color.Orange, true);
-                    Log("Try flashing a clean firmware or using Download Mode erase.", Color.Black, true);
+                    Log("Some operations succeeded, but the lock may persist if it is stored in bootloader/miscdata.", Color.Orange, true);
+                    Log("If the device is still locked after reboot:", Color.Black, true);
+                    Log("  1. Boot to Download Mode", Color.Black, true);
+                    Log("  2. Read the 'miscdata' partition using the Read Partition feature", Color.Black, true);
+                    Log("  3. Use 'MiscData Anti-Crack Patch' tool to clean the file", Color.Black, true);
+                    Log("  4. Flash the cleaned miscdata back to the device", Color.Black, true);
                 }
                 else
                 {
                     Log("Anti-Crack removal failed — no method responded.", Color.Red, true);
-                    Log("This firmware variant may not support these commands.", Color.Red, true);
+                    Log("This firmware variant (A669L) does not support Diag-based removal.", Color.Red, true);
+                    Log("The anti-crack lock is likely stored in the miscdata partition or bootloader.", Color.Red, true);
+                    Log("Required action:", Color.Black, true);
+                    Log("  1. Boot device to Download Mode (Press Volume Down + USB)", Color.Black, true);
+                    Log("  2. Use 'Read Partition' to extract 'miscdata' from the device", Color.Black, true);
+                    Log("  3. Use 'MiscData Anti-Crack Patch' in Diag Tool tab to clean the file", Color.Black, true);
+                    Log("  4. Flash the cleaned miscdata back using Download Mode", Color.Black, true);
                 }
                 Log("Device is rebooting. Please wait for normal boot.", Color.Black, true);
             }
