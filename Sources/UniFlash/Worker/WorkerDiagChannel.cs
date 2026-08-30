@@ -304,14 +304,23 @@ namespace iReverse_Unisoc_Ultimate
                     "AT+SPDIAG=\"AT+SET_SECURITY_FLAG=0\"",
                     "AT+SPDIAG=\"AT+SPTEST=1\"",
                     "AT+SPDIAG=\"AT+SPFACTORY\"",
-                    "AT+SPDIAG=\"AT+ETSRESET\""
+                    "AT+SPDIAG=\"AT+ETSRESET\"",
+                    "AT+SPDIAG=\"AT+CK=\"\",\"\",\"\",\"\"\"",
+                    "AT+SPDIAG=\"AT+CCINFO=0\"",
+                    "AT+SPDIAG=\"AT+CRSM=176,28542,0,0,0,15\"",
+                    "AT+SPDIAG=\"AT+CRSM=214,28542,0,0,0,15\"",
+                    "AT+SPDIAG=\"AT+SPPASS=\"00000000\"\"",
+                    "AT+SPDIAG=\"AT+SPUNLOCKCODE=0\""
                 };
 
                 foreach (string cmd in atCommands)
                 {
                     if (IsCancelled(e)) return;
                     DiagResult r = DiagService.SendAt(cmd, out response);
-                    Log("   " + cmd.Substring(cmd.Length - 20) + " => " + (r.Success ? "OK" : "FAIL"), Color.Black, true);
+                    string shortCmd = cmd.Length > 35 ? cmd.Substring(0, 35) + "..." : cmd;
+                    Log("   " + shortCmd + " => " + (r.Success ? "OK" : "FAIL"), Color.Black, true);
+                    if (!string.IsNullOrEmpty(response))
+                        Log("      Response: " + response, Color.Gray, true);
                     if (r.Success) methodASuccess = true;
                 }
                 Log("Method A: " + (methodASuccess ? "Partial/Full success" : "No response"), Color.Purple, true);
